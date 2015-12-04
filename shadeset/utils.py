@@ -1,20 +1,67 @@
 from contextlib import contextmanager
+import maya.cmds as cmds
 
 
-def get_scene_render_layers():
-    return []
+def get_shader(node):
+
+    node_type = cmds.nodeType(node)
+
+    if node_type == 'transform':
+        shape = get_shape(node)
+        if not shape:
+            return
+    elif node_type == 'mesh':
+        shape = node
+
+    try:
+        shading_engine = cmds.listConnections(shape, type='shadingEngine')[0]
+    except IndexError:
+        raise Exception('{} is not attached to a shading engine'.format(shape))
+
+    try:
+        shader = cmds.listConnections(shading_engine + '.surfaceShader')[0]
+    except IndexError:
+        raise Exception('{} shadingEngine has no surfaceShader attached'.format(shading_engine))
+
+    return shader
 
 
-def render_layer_iterator(layers):
+def get_shape(node):
 
-    old_layer = ''
+    children = cmds.listRelatives(
+        node,
+        shapes=True,
+        noIntermediate=True,
+    )
 
-    for layer in layers:
-        try:
-            # activate render layer
-            yield layer
-        except:
-            continue
+    if not children:
+        raise Exception('{} has no shape nodes')
+
+    return children[0]
+
+
+@contextmanager
+def selection(*args, **kwargs):
+
+    old_selection = cmds.ls(sl=True, long=True)
+    try:
+        cmds.select(*args, **kwargs)
         yield
+    except:
+        raise
+    finally:
+        cmds.select(old_selection)
 
-    # reactivate old_layer
+
+def export_material(node, out_file):
+
+    with selection(node):
+        cmds.file(
+            out_file,
+            exportSelected=True,
+            channels=True,
+            expressions=True,
+            shader=True,
+            type='mayaBinary',
+            force=True,
+        )

@@ -7,3 +7,6 @@ __url__ = 'http://github.com//shadeset.git'
 __version__ = '0.1.0'
 __license__ = 'MIT'
 __description__ = 'Autodesk Maya scene shading exporter'
+
+
+from .models import ShadeSet
