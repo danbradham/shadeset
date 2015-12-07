@@ -112,24 +112,23 @@ class BaseSet(object):
         for t in transforms:
             shader = utils.get_shader(t)
             if shader:
-                data['geometry'][t] = shader
-                data['materials'].setdefault(shader, '')
+                data['geometry'][str(t)] = str(shader)
+                data['shaders'].setdefault(
+                    str(shader), 'shaders/{}.mb'.format(shader)
+                )
 
         return data
 
     @staticmethod
     def export(shade_set, outdir):
 
-        materials = shade_set.get('materials', None)
-        if not materials:
+        shaders = shade_set.get('shaders', None)
+        if not shaders:
             return
 
-        for material in materials.keys():
-            rel_path = 'materials/{}.mb'.format(material)
-            out_file = os.path.join(outdir, rel_path)
-            shade_set['materials'][material] = rel_path
-
-            utils.export_material(material, out_file)
+        for shader, shader_path in shaders.keys():
+            out_file = os.path.join(outdir, shader_path)
+            utils.export_shader(shader, out_file)
 
 
 ShadeSet.register(BaseSet)

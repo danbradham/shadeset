@@ -32,10 +32,11 @@ def get_shape(node):
         node,
         shapes=True,
         noIntermediate=True,
+        type='mesh',
     )
 
     if not children:
-        raise Exception('{} has no shape nodes')
+        return
 
     return children[0]
 
@@ -53,7 +54,7 @@ def selection(*args, **kwargs):
         cmds.select(old_selection)
 
 
-def export_material(node, out_file):
+def export_shader(node, out_file):
 
     with selection(node):
         cmds.file(
