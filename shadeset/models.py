@@ -9,20 +9,45 @@ import os
 
 
 class ShadeSet(dict):
-    '''An object containing scene shading information.'''
+    '''A dictionary subclass used to gather and export scene shading data
 
-    _subsets = set()
+    :param path: Path to loaded shadeset.yml file
+    '''
+
+    registry = set()
+
+    def __init__(self, path=None, *args, **kwargs):
+        self.path = path
+        self.root = None
+        self.name = None
+        if self.path:
+            self.root = os.path.dirname(self.path)
+            self.name = os.path.splitext(os.path.basename(self.path))[0]
+        super(ShadeSet, self).__init__(*args, **kwargs)
+
+    def relative(self, path):
+        return os.path.join(self.root, path)
 
     @classmethod
-    def register(cls, subset):
-        cls._subsets.add(subset)
+    def load(cls, shade_path):
+        '''Load scene shading data from an exported shadeset'''
 
-    @classmethod
-    def unregister(cls, subset):
-        cls._subsets.discard(subset)
+        with open(shade_path, 'r') as f:
+            shade_data = yaml.load(f.read())
+
+        return cls(shade_path, shade_data)
 
     @classmethod
     def gather(cls, selection=True, render_layers=False):
+        '''Gather shading data from a scene using the registered
+        :class:`Subset` s. Returns a new :class:`ShadeSet` object containing
+        the gathered data.
+
+        :param selection: if True gather shading data for the selected
+            transforms
+        :param render_layers: if True shading data for all render layers
+        '''
+
         shade_set = cls()
 
         if render_layers:
@@ -32,7 +57,7 @@ class ShadeSet(dict):
                 for layer in layers:
                     layer.activate()
 
-                    for subset in cls._subsets:
+                    for subset in cls.registry:
                         layers_data[layer.name].update(
                             subset.gather(selection=selection)
                         )
@@ -40,17 +65,30 @@ class ShadeSet(dict):
             if layers_data:
                 shade_set['render_layers'] = layers_data
 
-        for subset in cls._subsets:
-            shade_set.update(subset.gather(selection=selection))
+        for subset in cls.registry:
+            data = subset.gather(selection=selection)
+            print data
+            shade_set.update(data)
 
         return shade_set
 
+    def reference(self):
+        '''Reference this ShadeSets dependencies'''
+        for subset in self.registry:
+            subset.reference(self)
+
+    def import_(self):
+        '''Import this ShadeSets dependencies'''
+        for subset in self.registry:
+            subset.import_(self)
+
     def apply(self):
+        '''Apply this :class:`ShadeSet` to the currently opened scene'''
 
         shade_set = deepcopy(self)
         render_layers = shade_set.pop('render_layers', None)
 
-        for subset in self._subsets:
+        for subset in self.registry:
             subset.apply(shade_set)
 
         if render_layers:
@@ -58,10 +96,14 @@ class ShadeSet(dict):
                 for layer in layers:
                     if not layer.exists:
                         continue
-                    for subset in self._subsets:
+                    for subset in self.registry:
                         subset.apply(render_layers[layer])
 
-    def export(self, outdir):
+    def export(self, outdir, name):
+        '''Export this :class:`ShadeSet` to a directory
+
+        :param outdir: Output directory
+        '''
 
         made_dir = False
         if not os.path.exists(outdir):
@@ -69,38 +111,52 @@ class ShadeSet(dict):
             made_dir = True
 
         try:
-            self._export(outdir)
+            self._export(outdir, name)
         except:
             if made_dir:
                 shutil.rmtree(outdir)
             raise
 
-    def _export(self, outdir):
+    def _export(self, outdir, name):
 
         out_shade_set = deepcopy(self)
         render_layers = out_shade_set.pop('render_layers', None)
 
-        for subset in self._subsets:
-            subset.export(out_shade_set, outdir)
+        for subset in self.registry:
+            subset.export(out_shade_set, outdir, name)
 
         if render_layers:
             with RenderLayers(render_layers.keys()) as layers:
                 for layer in layers:
-                    for subset in self._subsets:
-                        subset.export(render_layers[layer], outdir)
+                    for subset in self.registry:
+                        subset.export(render_layers[layer], outdir, name)
                 out_shade_set['render_layers'] = render_layers
 
-        shade_path = os.path.join(outdir, 'shadeset.yml')
-        encoded = yaml.safe_dump(self, default_flow_style=False)
+        shade_path = os.path.join(outdir, name + '.yml')
+        encoded = yaml.safe_dump(dict(self), default_flow_style=False)
 
         with open(shade_path, 'w') as f:
             f.write(encoded)
 
 
-class BaseSet(object):
+class SubSet(object):
 
-    @staticmethod
-    def gather(selection):
+    def gather(self, selection):
+        raise NotImplementedError()
+
+    def import_(self, shade_set):
+        raise NotImplementedError()
+
+    def export(self, shade_set, outdir, name):
+        raise NotImplementedError()
+
+    def apply(self, shade_set):
+        raise NotImplementedError()
+
+
+class BaseSet(SubSet):
+
+    def gather(self, selection):
 
         data = defaultdict(dict)
 
@@ -109,29 +165,52 @@ class BaseSet(object):
         else:
             transforms = cmds.ls(long=True, transforms=True)
 
+        shading_groups = []
         for t in transforms:
-            shader = utils.get_shader(t)
-            if shader:
-                data['geometry'][str(t)] = str(shader)
-                data['shaders'].setdefault(
-                    str(shader), 'shaders/{}.mb'.format(shader)
-                )
+            sgs = utils.get_shading_groups(t)
+            if sgs:
+                shading_groups.extend(sgs)
+
+        shading_groups = set(shading_groups)
+
+        for sg in shading_groups:
+            members = cmds.sets(sg, query=True)
+            if not members:
+                continue
+
+            _id = utils.add_id(sg)
+            members = utils.short_names(members)
+            data['shadingGroups'][str(sg)] = {
+                'meta_id': _id,
+                'members': members,
+            }
 
         return data
 
-    @staticmethod
-    def export(shade_set, outdir):
+    def import_(self, shade_set):
+        shaders_path = os.path.join(shade_set.root, shade_set.name + '.mb')
+        utils.import_shader(shaders_path)
 
-        shaders = shade_set.get('shaders', None)
-        if not shaders:
-            return
+    def reference(self, shade_set):
+        shaders_path = os.path.join(shade_set.root, shade_set.name + '.mb')
+        utils.reference_shader(shaders_path, namespace='BaseShadeSet')
 
-        for shader, shader_path in shaders.keys():
-            out_file = os.path.join(outdir, shader_path)
-            utils.export_shader(shader, out_file)
+    def export(self, shade_set, outdir, name):
+        shading_groups = shade_set['shadingGroups'].keys()
+        utils.export_shader(shading_groups, os.path.join(outdir, name + '.mb'))
+
+    def apply(self, shade_set):
+
+        for sg, sg_data in shade_set['shadingGroups'].items():
+            if sg == 'initialShadingGroup':
+                shading_group = 'initialShadingGroup'
+            else:
+                shading_group = utils.node_from_id(sg_data['meta_id'])
+            members = utils.find_members(sg_data['members'])
+            utils.assign_shading_group(shading_group, members)
 
 
-ShadeSet.register(BaseSet)
+ShadeSet.registry.add(BaseSet())
 
 
 class RenderLayer(object):

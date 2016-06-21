@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import unittest
-from . import data_path
+import shutil
+import os
 from shadeset import ShadeSet
+from . import data_path
 from maya import standalone, cmds
 
 
@@ -11,6 +13,7 @@ def setUpModule():
 
 def tearDownModule():
     standalone.uninitialize()
+    #shutil.rmtree(data_path('testset'))
 
 
 class TestShadeSet(unittest.TestCase):
@@ -78,3 +81,35 @@ class TestShadeSet(unittest.TestCase):
             'shaders': {'lambert1': 'shaders/lambert1.mb'}
         }
         assert shade_set == expected_shade_set
+
+    def test_round_trip(self):
+        '''Test shadeset round-trip'''
+
+        cmds.file(self.base_scene, open=True)
+        cmds.select('pSphere*')
+        pre_shade_set = ShadeSet.gather(selection=True, render_layers=False)
+        export_path = data_path('testset')
+        pre_shade_set.export(export_path)
+
+        expected_files = (
+            data_path('testset', 'shadeset.yml'),
+            data_path('testset', 'shaders', 'phongE1.mb'),
+            data_path('testset', 'shaders', 'phong1.mb'),
+            data_path('testset', 'shaders', 'blinn1.mb'),
+            data_path('testset', 'shaders', 'rampShader1.mb'),
+            data_path('testset', 'shaders', 'surfaceShader1.mb'),
+        )
+
+        assert all([os.path.exists(f) for f in expected_files])
+
+        cmds.file(self.noshader_scene, open=True)
+        shade_set = ShadeSet.load(data_path('testset'))
+
+        assert pre_shade_set == shade_set
+
+        shade_set.apply()
+
+        cmds.select('pSphere*', replace=True)
+        post_shade_set = ShadeSet.gather(selection=True, render_layers=False)
+
+        assert pre_shade_set == post_shade_set

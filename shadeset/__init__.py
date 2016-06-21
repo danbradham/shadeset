@@ -9,4 +9,5 @@ __license__ = 'MIT'
 __description__ = 'Autodesk Maya scene shading exporter'
 
 
-from .models import ShadeSet
+from . import models
+from .api import *
