@@ -1,7 +1,37 @@
+# -*- coding: utf-8 -*-
+
 import os
 import uuid
 from contextlib import contextmanager
 import maya.cmds as cmds
+
+
+def get_shapes_in_hierarchy(node):
+    '''Get all valid shapes underneath the node
+
+    :param node: Name of transform node'''
+
+    shapes = set()
+
+    children = cmds.ls(group, dag=True, type='transform', long=True)
+    for child in children:
+        shape = get_shape(child)
+        if shape:
+            shapes.add(shape)
+
+    return list(shapes)
+
+
+def get_parents(node):
+
+    result = []
+
+    parent = cmds.listRelatives(node, parent=True, fullPath=True)
+    while parent:
+        result.append(parent[0])
+        parent = cmds.listRelatives(parent[0], parent=True, fullPath=True)
+
+    return result
 
 
 def get_shape(node):
@@ -10,18 +40,18 @@ def get_shape(node):
     :param node: Name of transform node
     '''
 
-    children = cmds.listRelatives(
-        node,
-        shapes=True,
-        noIntermediate=True,
-        type='mesh',
-        fullPath=True,
-    )
+    valid_types = ['mesh', 'nurbsSurface']
+    for typ in valid_types:
+        children = cmds.listRelatives(
+            node,
+            shapes=True,
+            noIntermediate=True,
+            type=typ,
+            fullPath=True,
+        )
 
-    if not children:
-        return
-
-    return children[0]
+        if children:
+            return children[0]
 
 
 @contextmanager
@@ -145,8 +175,10 @@ def node_from_id(_id):
 def add_id(node):
 
     attr = node + '.meta_id'
-    if not cmds.objExists(attr):
-        cmds.addAttr(node, ln='meta_id', dt='string')
+    if cmds.objExists(attr):
+        return cmds.getAttr(attr)
+
+    cmds.addAttr(node, ln='meta_id', dt='string')
 
     identifier = str(uuid.uuid1())
     cmds.setAttr(attr, identifier, type='string')
@@ -167,7 +199,7 @@ def get_shading_groups(node):
         if not shape:
             return
 
-    elif node_type == 'mesh':
+    elif node_type in ['mesh', 'nurbsSurface']:
         shape = node
 
     shading_engines = cmds.listConnections(shape, type='shadingEngine')
@@ -210,6 +242,12 @@ def find_members(members):
     return found
 
 
+def member_in_hierarchy(member, *candidates):
+    for candidate in candidates:
+        if candidate in get_parents(member):
+            return True
+
+
 def apply_shader(shape, shader):
     '''Apply a shader to the specified shape
 
@@ -229,4 +267,6 @@ def apply_shader(shape, shader):
 
 
 def assign_shading_group(shading_group, members):
+    print shading_group
+    print members
     cmds.sets(members, edit=True, forceElement=shading_group)
