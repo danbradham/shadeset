@@ -4,7 +4,13 @@ from .models import ShadeSet
 from .utils import selection, get_shapes_in_hierarchy
 from maya import cmds
 
-__all__ = ['gather', 'load', 'register_subset', 'unregister_subset']
+__all__ = [
+    'gather',
+    'gather_hierarchy',
+    'load',
+    'register_subset',
+    'unregister_subset',
+    'clear_registry']
 
 
 def gather(**kwargs):
@@ -17,15 +23,6 @@ def gather(**kwargs):
     '''
 
     return ShadeSet.gather(**kwargs)
-
-
-def load(shade_path):
-    '''Load a :class:`ShadeSet` from disk.
-
-    :param shade_path: Path to shadeset.yml file
-    '''
-
-    return ShadeSet.load(shade_path)
 
 
 def gather_hierarchy(**kwargs):
@@ -45,13 +42,13 @@ def gather_hierarchy(**kwargs):
     return ss
 
 
-def load_hierarchy(shade_path):
-    '''Load a :class:`ShadeSet` from disk, only under the selected hierarchy.
+def load(shade_path):
+    '''Load a :class:`ShadeSet` from disk.
 
     :param shade_path: Path to shadeset.yml file
     '''
 
-    pass
+    return ShadeSet.load(shade_path)
 
 
 def register_subset(subset):

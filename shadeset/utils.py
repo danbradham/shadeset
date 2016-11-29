@@ -3,6 +3,7 @@
 import os
 import uuid
 from contextlib import contextmanager
+from functools import wraps
 import maya.cmds as cmds
 
 
@@ -13,7 +14,7 @@ def get_shapes_in_hierarchy(node):
 
     shapes = set()
 
-    children = cmds.ls(group, dag=True, type='transform', long=True)
+    children = cmds.ls(node, dag=True, type='transform', long=True)
     for child in children:
         shape = get_shape(child)
         if shape:
@@ -52,6 +53,19 @@ def get_shape(node):
 
         if children:
             return children[0]
+
+
+def maintains_selection(fn):
+    '''A Decorator that ensures maya selection before and after function
+    execution is the same.
+    '''
+    wraps(fn)
+    def wrapper(*args, **kwargs):
+        old_selection = cmds.ls(sl=True, long=True)
+        result = fn(*args, **kwargs)
+        cmds.select(old_selection, replace=True)
+        return result
+    return wrapper
 
 
 @contextmanager
@@ -267,6 +281,7 @@ def apply_shader(shape, shader):
 
 
 def assign_shading_group(shading_group, members):
-    print shading_group
-    print members
+    if not members:
+        # TODO log no members
+        return
     cmds.sets(members, edit=True, forceElement=shading_group)

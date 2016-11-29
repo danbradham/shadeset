@@ -73,16 +73,19 @@ class ShadeSet(dict):
 
         return shade_set
 
+    @utils.maintains_selection
     def reference(self):
         '''Reference subset dependencies'''
         for subset in self.registry:
             subset.reference(self)
 
+    @utils.maintains_selection
     def import_(self):
         '''Import subset dependencies'''
         for subset in self.registry:
             subset.import_(self)
 
+    @utils.maintains_selection
     def apply(self, selection=False, render_layers=False):
         '''Apply this :class:`ShadeSet` to the currently opened scene'''
 
@@ -107,6 +110,7 @@ class ShadeSet(dict):
                             selection=selection
                         )
 
+    @utils.maintains_selection
     def export(self, outdir, name):
         '''Export this :class:`ShadeSet` to a directory
 
