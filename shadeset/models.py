@@ -257,6 +257,9 @@ class LayerMembershipSet(SubSet):
             members = [m for m in members
                        if utils.member_in_hierarchy(m, *nodes)]
 
+        if not members:
+            return
+
         layer.add_members(members)
 
 
