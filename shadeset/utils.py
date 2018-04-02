@@ -59,7 +59,7 @@ def maintains_selection(fn):
     '''A Decorator that ensures maya selection before and after function
     execution is the same.
     '''
-    wraps(fn)
+    @wraps(fn)
     def wrapper(*args, **kwargs):
         old_selection = cmds.ls(sl=True, long=True)
         result = fn(*args, **kwargs)
@@ -126,27 +126,46 @@ def import_shader(in_file):
     return cmds.ls(nodes, materials=True)[0]
 
 
+def update_reference(ref_node, in_file, namespace=None):
+
+    namespace = make_namespace(in_file, namespace)
+    cmds.file(in_file, loadReference=ref_node)
+    path = cmds.referenceQuery(ref_node, filename=True)
+    cmds.file(path, edit=True, namespace=namespace)
+    cmds.lockNode(ref_node, lock=False)
+    cmds.rename(ref_node, namespace + 'RN')
+    cmds.lockNode(namespace + 'RN', lock=True)
+
+
 def reference_shader(in_file, namespace=None):
     '''Import a maya file containing a shader
 
     :param in_file: Filepath of maya file
     '''
 
-    ref_found = False
+    namespace = make_namespace(in_file, namespace)
+
+    if not reference_in_scene(in_file):
+        cmds.file(in_file, reference=True, namespace=namespace)
+
+
+def make_namespace(in_file, namespace=None):
     name = os.path.splitext(os.path.basename(in_file))[0]
     valid_name = name.replace('.', '_')
     if namespace:
         namespace = namespace + '_' + valid_name
     else:
         namespace = valid_name
+    return namespace.replace('_shadingGroups', '').upper()
+
+
+def reference_in_scene(in_file):
 
     for ref in cmds.ls(references=True):
         path = cmds.referenceQuery(ref, filename=True)
         if os.path.abspath(path) == os.path.abspath(in_file):
-            ref_found = True
-
-    if not ref_found:
-        cmds.file(in_file, reference=True, namespace=namespace)
+            return True
+    return False
 
 
 def get_shader(node):
@@ -189,10 +208,8 @@ def node_from_id(_id):
 def add_id(node):
 
     attr = node + '.meta_id'
-    if cmds.objExists(attr):
-        return cmds.getAttr(attr)
-
-    cmds.addAttr(node, ln='meta_id', dt='string')
+    if not cmds.objExists(attr):
+        cmds.addAttr(node, ln='meta_id', dt='string')
 
     identifier = str(uuid.uuid1())
     cmds.setAttr(attr, identifier, type='string')
@@ -221,6 +238,8 @@ def get_shading_groups(node):
 
 
 def strip_namespaces(nodes):
+    '''Fuck da namespaces'''
+
     for node in nodes:
 
         component = None
@@ -238,7 +257,35 @@ def strip_namespaces(nodes):
         yield no_namespace
 
 
-def short_names(nodes):
+def filter_bad_face_assignments(nodes):
+    '''Removes bad face assignments.
+
+    We consider a bad face assignment to be an assignment
+    to every single face of a shape.
+
+    For example if a an object has 10 faces, "node.f[0:9]", is a bad face
+    assignment. We will just shorten this to "node".
+    '''
+    import re
+    pattern = re.compile(r'\.f\[0:(\d+)\]$')
+
+    shorts = []
+    for node in nodes:
+        match = pattern.search(node)
+        if match:
+            short_name = node.replace(match.group(0), '')
+            end = int(match.group(1))
+            num_faces = cmds.polyEvaluate(short_name, face=True)
+            if end + 1 == num_faces:
+                shorts.append(short_name)
+                continue
+        shorts.append(node)
+    return shorts
+
+
+def shorten_names(nodes):
+    '''Shortens names, removing namespaces and hierarchical components'''
+
     shorts = []
     for node in strip_namespaces(nodes):
         if '|' in node:
@@ -248,11 +295,38 @@ def short_names(nodes):
     return shorts
 
 
+def get_members(shading_group):
+    '''Get all shading group members
+
+    :param shading_group: Name of shadingEngine/Group
+    '''
+
+    return cmds.sets(shading_group, query=True)
+
+
 def find_members(members):
     found = []
     for member in members:
+
+        # Original lookup failed when Deformers were added in rig/animation
+        # ms = cmds.ls(member, recursive=True, long=True)
+        # if ms:
+        #     found.extend(ms)
+        #     continue
+
+        # Cast a broader net
+        parts = member.split('.')
+        member = parts[0] + '*'
+        if len(parts) == 2:
+            component = parts[1]
+            member += component
+        if len(parts) > 2:
+            raise NameError('Too many parts in name: ' + member)
+
         ms = cmds.ls(member, recursive=True, long=True)
         found.extend(ms)
+
+    print(found)
     return found
 
 

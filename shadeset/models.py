@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from collections import defaultdict
-from copy import deepcopy
 from contextlib import contextmanager
 from .packages import yaml
 from . import utils
@@ -185,12 +184,13 @@ class ShadingGroupsSet(SubSet):
         shading_groups = set(shading_groups)
 
         for sg in shading_groups:
-            members = cmds.sets(sg, query=True)
+            members = utils.get_members(sg)
             if not members:
                 continue
 
             _id = utils.add_id(sg)
-            members = utils.short_names(members)
+            members = utils.filter_bad_face_assignments(members)
+            members = utils.shorten_names(members)
             data[str(sg)] = {
                 'meta_id': _id,
                 'members': members,
@@ -204,7 +204,7 @@ class ShadingGroupsSet(SubSet):
 
     def reference(self, shade_set):
         path = self.path(shade_set)
-        utils.reference_shader(path, namespace='BaseShadeSet')
+        utils.reference_shader(path, namespace='sg')
 
     def export(self, shade_set, outdir, name):
         shading_groups = shade_set['shadingGroups'].keys()
@@ -242,10 +242,10 @@ class LayerMembershipSet(SubSet):
         if layer.name == 'defaultRenderLayer':
             return {}
 
-        return {'layer_membership': utils.short_names(layer.members)}
+        return {'layer_membership': utils.shorten_names(layer.members)}
 
     def apply(self, shade_set, selection=False):
-        if not 'layer_membership' in shade_set:
+        if 'layer_membership' not in shade_set:
             return
 
         layer = RenderLayer.active()
@@ -263,8 +263,53 @@ class LayerMembershipSet(SubSet):
         layer.add_members(members)
 
 
+class CustomAttributesSet(SubSet):
+
+    prefixes = os.environ.get(
+        'SHADESET_ATTRPREFIXES',
+        'mtoa_constant meta_'
+    ).split()
+
+    attributes = os.environ.get(
+        'SHADESET_ATTRIBUTES',
+        ''
+    )
+
+    def gather(self, selection):
+
+        data = {}
+        sel = cmds.ls(sl=True, long=True)
+
+        # TODO Implement Gather
+
+        return {'customAttributes': data}
+
+    def apply(self, shade_set, selection=False):
+
+        # TODO Implement Apply
+        pass
+
+
+class ObjectSetsSet(SubSet):
+
+    def gather(self, selection):
+
+        data = {}
+
+        # TODO implement Gather
+
+        return {'ObjectSets': data}
+
+    def apply(self, shade_set, selection=False):
+
+        # TODO Implement Apply
+        pass
+
+
 ShadeSet.registry.add(ShadingGroupsSet())
 ShadeSet.registry.add(LayerMembershipSet())
+ShadeSet.registry.add(CustomAttributesSet())
+ShadeSet.registry.add(ObjectSetsSet())
 
 
 class RenderLayer(object):
@@ -281,7 +326,7 @@ class RenderLayer(object):
     def __hash__(self):
         return hash(self.name)
 
-    def __eq__(self):
+    def __eq__(self, other):
         return str(self) == str(other)
 
     @property
