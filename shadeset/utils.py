@@ -319,14 +319,13 @@ def find_members(members):
         member = parts[0] + '*'
         if len(parts) == 2:
             component = parts[1]
-            member += component
+            member += '.' + component
         if len(parts) > 2:
             raise NameError('Too many parts in name: ' + member)
 
         ms = cmds.ls(member, recursive=True, long=True)
         found.extend(ms)
 
-    print(found)
     return found
 
 
