@@ -272,23 +272,54 @@ class CustomAttributesSet(SubSet):
 
     attributes = os.environ.get(
         'SHADESET_ATTRIBUTES',
-        ''
-    )
+        'aiOpaque'
+    ).split()
 
     def gather(self, selection):
 
         data = {}
-        sel = cmds.ls(sl=True, long=True)
 
-        # TODO Implement Gather
+        if selection:
+            shapes = [utils.get_shape(n) for n in cmds.ls(sl=True, long=True)]
+        else:
+            shapes = [
+                utils.get_shape(n)
+                for n in cmds.ls(long=True, transforms=True)
+            ]
+
+        for shape in shapes:
+            short_name = utils.shorten_name(shape)
+            shape_data = {}
+            for prefix in self.prefixes:
+                attrs = utils.get_prefixed_attrs(shape, prefix)
+                for attr in attrs:
+                    shape_data[attr] = utils.get_attr_data(shape, attr)
+
+            for attr in self.attributes:
+                attr_path = shape + '.' + attr
+                if cmds.objExists(attr_path):
+                    shape_data[attr] = utils.get_attr_data(shape, attr)
+            data[short_name] = shape_data
 
         return {'customAttributes': data}
 
     def apply(self, shade_set, selection=False):
 
-        # TODO Implement Apply
-        pass
+        if 'customAttributes' not in shade_set:
+            return
 
+        for shape, attrs in shade_set['customAttributes'].items():
+
+            members = utils.find_shape(shape)
+
+            if selection:
+                nodes = cmds.ls(sl=True, long=True)
+                members = [m for m in members
+                           if utils.member_in_hierarchy(m, *nodes)]
+
+            for attr_name, attr_data in attrs.items():
+                for member in members:
+                    utils.set_attr_data(member, attr_data)
 
 class ObjectSetsSet(SubSet):
 

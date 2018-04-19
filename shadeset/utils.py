@@ -42,6 +42,9 @@ def get_shape(node):
     '''
 
     valid_types = ['mesh', 'nurbsSurface']
+    if cmds.nodeType(node) in valid_types:
+        node = cmds.listRelatives(node, parent=True)
+
     for typ in valid_types:
         children = cmds.listRelatives(
             node,
@@ -240,21 +243,25 @@ def get_shading_groups(node):
 def strip_namespaces(nodes):
     '''Fuck da namespaces'''
 
-    for node in nodes:
+    return (strip_namespace(node) for node in nodes)
 
-        component = None
-        if '.' in node:
-            node, component = node.split('.')
 
-        if ':' in node:
-            no_namespace = str(node.split(':')[-1])
-        else:
-            no_namespace = str(node)
+def strip_namespace(node):
+    '''Fuck da namespace'''
 
-        if component:
-            no_namespace = '.'.join([no_namespace, component])
+    component = None
+    if '.' in node:
+        node, component = node.split('.')
 
-        yield no_namespace
+    if ':' in node:
+        no_namespace = str(node.split(':')[-1])
+    else:
+        no_namespace = str(node)
+
+    if component:
+        no_namespace = '.'.join([no_namespace, component])
+
+    return no_namespace
 
 
 def filter_bad_face_assignments(nodes):
@@ -283,16 +290,19 @@ def filter_bad_face_assignments(nodes):
     return shorts
 
 
+def shorten_name(node):
+    '''Shorten name, removing namespaces and hierarchical components'''
+
+    node = strip_namespace(node)
+    if '|' in node:
+        node = node.split('|')[-1]
+    return node
+
+
 def shorten_names(nodes):
     '''Shortens names, removing namespaces and hierarchical components'''
 
-    shorts = []
-    for node in strip_namespaces(nodes):
-        if '|' in node:
-            shorts.append(node.split('|')[-1])
-        else:
-            shorts.append(node)
-    return shorts
+    return [shorten_name(node) for node in nodes]
 
 
 def get_members(shading_group):
@@ -302,6 +312,16 @@ def get_members(shading_group):
     '''
 
     return cmds.sets(shading_group, query=True)
+
+
+def find_shape(shape):
+    '''Find a shape node, or it's deformed shape '''
+
+    match = cmds.ls(shape, recursive=True, long=True)
+    if not match:
+        match = cmds.ls(shape + '*', recursive=True, long=True)
+
+    return match
 
 
 def find_members(members):
@@ -358,3 +378,130 @@ def assign_shading_group(shading_group, members):
         # TODO log no members
         return
     cmds.sets(members, edit=True, forceElement=shading_group)
+
+
+def get_prefixed_attrs(node, prefix):
+    '''Get all node attributes with the specified prefix'''
+
+    return [attr for attr in cmds.listAttr(node) if attr.startswith(prefix)]
+
+
+def get_enum_options(node, attr):
+    '''Get enum options'''
+
+    return cmds.attributeQuery(attr, node=node, listEnum=True)
+
+
+def get_child_attrs(node, attr):
+    '''Get child attribute data'''
+
+    children = cmds.attributeQuery(attr, node=node, listChildren=True)
+    if not children:
+        return
+    return [
+        dict(
+            name=c,
+            type=cmds.getAttr(node + '.' + c, type=True),
+            keyable=cmds.attributeQuery(c, node=node, keyable=True)
+        )
+        for c in children
+    ]
+
+
+def get_attr_data(node, attr):
+    '''Gets data for attribute'''
+
+    path = node + '.' + attr
+    if cmds.objExists(path):
+        children = get_child_attrs(node, attr)
+        value = cmds.getAttr(path)
+        if isinstance(value, list):
+            value = value[0]
+        return dict(
+            name=attr,
+            value=value,
+            type=cmds.getAttr(path, type=True),
+            short=cmds.attributeName(path, short=True),
+            nice=cmds.attributeName(path, nice=True),
+            compound=bool(children),
+            children=children,
+            options=get_enum_options(node, attr),
+            keyable=cmds.attributeQuery(attr, node=node, keyable=True)
+        )
+
+
+def add_attr_kwargs(attr_data):
+    '''Get kwargs suitable for adding an attribute'''
+
+    type_flag = 'at'
+    dt_attrs = [
+        'matrix', 'string', 'stringArray', 'doubleArray', 'Int32Array',
+        'reflectance', 'spectrum', 'float2', 'float3', 'double2',
+        'double3', 'long2', 'long3', 'short2', 'short3', 'vectorArray',
+        'nurbsCurve', 'nurbsSurface', 'mesh', 'lattice', 'pointArray'
+    ]
+    if attr_data['type'] in dt_attrs:
+        type_flag = 'dt'
+    if attr_data['compound']:
+        type_flag = 'at'
+
+    kwargs = dict(
+        longName=attr_data['name'],
+        shortName=attr_data['short'],
+        niceName=attr_data['nice'],
+        keyable=attr_data['keyable']
+    )
+    kwargs[type_flag] = attr_data['type']
+
+    if attr_data['options']:
+        kwargs['enumName'] = ':'.join(attr_data['options'])
+
+    return kwargs
+
+
+def unpackable(attr_data):
+    unpackable_types = [
+        'float2', 'float3', 'double2', 'double3', 'long2', 'long3',
+        'compound', 'spectrum', 'reflectance', 'matrix', 'fltMatrix',
+        'reflectanceRBG', 'spectrumRGB', 'short2', 'short3', 'doubleArray',
+        'Int32Array', 'vectorArray'
+    ]
+    return attr_data['type'] in unpackable_types
+
+
+def typeable(attr_data):
+    typeable_attrs = [
+        'float2', 'float3', 'double2', 'double3', 'long2', 'long3',
+        'compound', 'spectrum', 'reflectance', 'matrix', 'fltMatrix',
+        'reflectanceRBG', 'spectrumRGB', 'short2', 'short3', 'doubleArray',
+        'Int32Array', 'vectorArray', 'string', 'byte'
+    ]
+    return attr_data['type'] in typeable_attrs
+
+
+def set_attr_data(node, attr_data):
+    '''Sets an attribute from data retrieved by get_attr_data'''
+
+    path = node + '.' + attr_data['name']
+    if not cmds.objExists(path):
+        kwargs = add_attr_kwargs(attr_data)
+        cmds.addAttr(node, **kwargs)
+        if attr_data['children']:
+            for child in attr_data['children']:
+                cmds.addAttr(
+                    node,
+                    ln=child['name'],
+                    at=child['type'],
+                    keyable=child['keyable'],
+                    parent=attr_data['name']
+                )
+    args = [path]
+    if unpackable(attr_data):
+        args.extend(attr_data['value'])
+    else:
+        args.append(attr_data['value'])
+
+    kwargs = {}
+    if typeable(attr_data):
+        kwargs['type'] = attr_data['type']
+    cmds.setAttr(*args, **kwargs)
