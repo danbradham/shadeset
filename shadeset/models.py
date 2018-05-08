@@ -338,7 +338,7 @@ class ObjectSetsSet(SubSet):
 
 
 ShadeSet.registry.add(ShadingGroupsSet())
-ShadeSet.registry.add(LayerMembershipSet())
+# ShadeSet.registry.add(LayerMembershipSet())
 ShadeSet.registry.add(CustomAttributesSet())
 ShadeSet.registry.add(ObjectSetsSet())
 
