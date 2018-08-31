@@ -504,4 +504,8 @@ def set_attr_data(node, attr_data):
     kwargs = {}
     if typeable(attr_data):
         kwargs['type'] = attr_data['type']
-    cmds.setAttr(*args, **kwargs)
+    try:
+        cmds.setAttr(*args, **kwargs)
+    except RuntimeError as e:
+        if 'locked or connected' in str(e):
+            cmds.warning(str(e).split(':', 1)[-1].rstrip())
