@@ -41,9 +41,10 @@ def get_shape(node):
     :param node: Name of transform node
     '''
 
+    print(node)
     valid_types = ['mesh', 'nurbsSurface']
     if cmds.nodeType(node) in valid_types:
-        node = cmds.listRelatives(node, parent=True)
+        node = cmds.listRelatives(node, parent=True, fullPath=True)
 
     for typ in valid_types:
         children = cmds.listRelatives(
@@ -132,6 +133,8 @@ def import_shader(in_file):
 def update_reference(ref_node, in_file, namespace=None):
 
     namespace = make_namespace(in_file, namespace)
+    cmds.file(unloadReference=ref_node)
+    cmds.file(cleanReference=ref_node)
     cmds.file(in_file, loadReference=ref_node)
     path = cmds.referenceQuery(ref_node, filename=True)
     cmds.file(path, edit=True, namespace=namespace)
@@ -293,10 +296,12 @@ def filter_bad_face_assignments(nodes):
 def shorten_name(node):
     '''Shorten name, removing namespaces and hierarchical components'''
 
-    node = strip_namespace(node)
     if '|' in node:
-        node = node.split('|')[-1]
-    return node
+        nodes = node.split('|')
+        stripped = [strip_namespace(n) for n in nodes]
+        return '|'.join(stripped)
+
+    return strip_namespace(node)
 
 
 def shorten_names(nodes):
@@ -370,7 +375,9 @@ def apply_shader(shape, shader):
         sg = sg[0]
 
     if not cmds.sets(shape, isMember=sg):
-        cmds.sets(shape, forceElement=sg)
+        # force initial shading assignment first...
+        cmds.sets(shape, edit=True, forceElement="initialShadingGroup")
+        cmds.sets(shape, edit=True, forceElement=sg)
 
 
 def assign_shading_group(shading_group, members):
