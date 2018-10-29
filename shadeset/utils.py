@@ -41,7 +41,6 @@ def get_shape(node):
     :param node: Name of transform node
     '''
 
-    print(node)
     valid_types = ['mesh', 'nurbsSurface']
     if cmds.nodeType(node) in valid_types:
         node = cmds.listRelatives(node, parent=True, fullPath=True)
