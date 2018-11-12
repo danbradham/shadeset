@@ -167,7 +167,12 @@ def make_namespace(in_file, namespace=None):
 def reference_in_scene(in_file):
 
     for ref in cmds.ls(references=True):
-        path = cmds.referenceQuery(ref, filename=True)
+        try:
+            path = cmds.referenceQuery(ref, filename=True)
+        except RuntimeError as e:
+            if "not associated with a reference file" in str(e):
+                continue
+            raise
         if os.path.abspath(path) == os.path.abspath(in_file):
             return True
     return False
@@ -293,7 +298,7 @@ def filter_bad_face_assignments(nodes):
 
 
 def shorten_name(node):
-    '''Shorten name, removing namespaces and hierarchical components'''
+    '''Shorten name removing namespaces'''
 
     if '|' in node:
         nodes = node.split('|')
@@ -329,6 +334,7 @@ def find_shape(shape):
 
 
 def find_members(members):
+
     found = []
     for member in members:
 

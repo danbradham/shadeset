@@ -26,7 +26,7 @@ def gather(**kwargs):
 
 
 def gather_hierarchy(**kwargs):
-    '''Gather shadeing data from the selected hierarchy
+    '''Gather shading data from the selected hierarchy
 
     :param render_layers: if True gather shading data for all render layers
     '''
