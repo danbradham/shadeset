@@ -31,15 +31,17 @@ def gather_hierarchy(**kwargs):
     :param render_layers: if True gather shading data for all render layers
     '''
 
+    kwargs['selection'] = True
+
     selected = cmds.ls(sl=True, long=True, transforms=True)
     shapes = []
     for node in selected:
         shapes.extend(get_shapes_in_hierarchy(node))
 
     with selection(shapes):
-        ss = ShadeSet.gather(selection=True, **kwargs)
+        shade_set = ShadeSet.gather(**kwargs)
 
-    return ss
+    return shade_set
 
 
 def load(shade_path):
@@ -49,6 +51,17 @@ def load(shade_path):
     '''
 
     return ShadeSet.load(shade_path)
+
+
+def save(shade_set, outdir, name):
+    '''Save a :class:`Shadeset` to disk.
+
+    :shade_set: :class:`ShadeSet` instance to save
+    :param outdir: Output directory of shadeset
+    :param name: basename of shadeset
+    '''
+
+    shade_set.export(outdir, name)
 
 
 def register_subset(subset):

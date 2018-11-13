@@ -321,6 +321,7 @@ class CustomAttributesSet(SubSet):
                 for member in members:
                     utils.set_attr_data(member, attr_data)
 
+
 class ObjectSetsSet(SubSet):
 
     def gather(self, selection):

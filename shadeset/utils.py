@@ -297,9 +297,45 @@ def filter_bad_face_assignments(nodes):
     return shorts
 
 
+def shortest_dag_path(dag_path):
+    '''Finds the shortest possible dag path to a node'''
+
+    dag_path = str(dag_path)
+    rdag_path = dag_path[::-1]
+
+    if '|' not in dag_path:
+        return dag_path
+
+    short_path = dag_path.split('|')[-1]
+    all_paths = [
+        str(n)[::-1]
+        for n in cmds.ls(short_path, long=True)
+        if n != dag_path
+    ]
+
+    longest_common = ''
+    for path in all_paths:
+        common = os.path.commonprefix([rdag_path, path])[::-1]
+        if len(common) > len(longest_common):
+            longest_common = common
+
+    parent = dag_path.replace(longest_common, '').rsplit('|')[-1]
+    return parent + longest_common
+
+
+def relative_dag_path(root, dag_path):
+    '''Gets a path relative to the given root path'''
+
+    if root in dag_path:
+        return dag_path.partition(root)[-1]
+
+    return dag_path
+
+
 def shorten_name(node):
     '''Shorten name removing namespaces'''
 
+    node = shortest_dag_path(node)
     if '|' in node:
         nodes = node.split('|')
         stripped = [strip_namespace(n) for n in nodes]
