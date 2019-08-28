@@ -5,6 +5,36 @@ import uuid
 from contextlib import contextmanager
 from functools import wraps
 import maya.cmds as cmds
+from maya import cmds
+import maya.api.OpenMaya as om
+
+
+def get_mfn(node):
+    sel = om.MSelectionList()
+    sel.add(node)
+    return om.MFnDependencyNode(sel.getDependNode(0))
+
+
+def get_history(nodes):
+    inputs = []
+    for node in nodes:
+        inputs.extend(cmds.listHistory(node))
+    return inputs
+
+
+@contextmanager
+def no_namespaces(nodes):
+
+    mfns = [get_mfn(node) for node in nodes]
+    old_names = [mfn.name() for mfn in mfns]
+    tmp_names = [name.split(':')[-1] for name in old_names]
+    try:
+        for mfn, tmp_name in zip(mfns, tmp_names):
+            mfn.setName(tmp_name)
+        yield
+    finally:
+        for mfn, old_name in zip(mfns, old_names):
+            mfn.setName(old_name)
 
 
 def get_shapes_in_hierarchy(node):
@@ -99,15 +129,16 @@ def export_shader(nodes, out_file):
     '''
 
     with selection(nodes, replace=True, noExpand=True):
-        cmds.file(
-            out_file,
-            exportSelected=True,
-            channels=True,
-            expressions=True,
-            shader=True,
-            type='mayaBinary',
-            force=True,
-        )
+        with no_namespaces(get_history(nodes)):
+            cmds.file(
+                out_file,
+                exportSelected=True,
+                channels=True,
+                expressions=True,
+                shader=True,
+                type='mayaBinary',
+                force=True,
+            )
 
 
 def import_shader(in_file):
