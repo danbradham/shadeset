@@ -4,7 +4,6 @@ import os
 import uuid
 from contextlib import contextmanager
 from functools import wraps
-import maya.cmds as cmds
 from maya import cmds
 import maya.api.OpenMaya as om
 
