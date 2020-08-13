@@ -20,10 +20,11 @@ QTabBar::tab {
     border-radius: 0;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
-    color: rgb(76, 76, 76);
+    color: rgb(118, 118, 118);
 }
 
 QTabBar::tab:hover {
+    background: rgb(58, 58, 58);
     color: rgb(126, 126, 126);
 }
 
