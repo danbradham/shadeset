@@ -30,11 +30,11 @@ Apply shadesets that you've exported for specific assets.
 Export shadesets for an asset.
 
 1. Apply some shaders.
-2. Select the asset you'd like to export the shading data for.
 2. Select the top level transform of the hierarchy that you'd like to export
 shading data for.
-3. Optionally provide a suffix like "red" or "green".
-4. Click export.
+3. Select the asset you'd like to export the shading data for.
+4. Optionally provide a suffix like "red" or "green".
+5. Click export.
 
 <img src="https://github.com/danbradham/shadeset/blob/master/images/ui_export.png"/>
 
