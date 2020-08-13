@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-# Standard library imports
-import inspect
 
 # Local imports
 from . import res
-from .. import api, lib
 from .widgets import (
     ConfigForm,
     ExportForm,
@@ -13,7 +10,7 @@ from .widgets import (
 )
 
 # Third party imports
-from Qt import QtCore, QtGui, QtWidgets
+from Qt import QtWidgets
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 from maya import OpenMayaUI
 

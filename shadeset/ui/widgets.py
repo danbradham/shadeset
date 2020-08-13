@@ -118,7 +118,7 @@ class ExportForm(QtWidgets.QWidget):
 
         name = state['asset']['asset']
         if state['suffix']:
-            name += '_' + stat['suffix']
+            name += '_' + state['suffix']
 
         next_publish = lib.get_next_publish(state['asset'], name)
         ss.export(
@@ -134,6 +134,9 @@ class ImportForm(QtWidgets.QWidget):
         super(ImportForm, self).__init__(parent=parent)
 
         self.project = QtWidgets.QComboBox()
+        self.project.setSizeAdjustPolicy(
+            self.project.AdjustToMinimumContentsLengthWithIcon
+        )
         self.asset = QtWidgets.QListWidget()
         self.shadeset = QtWidgets.QListWidget()
         self.selection = QtWidgets.QCheckBox('Selected &Hierarchies')
@@ -349,6 +352,11 @@ class ConfigForm(QtWidgets.QWidget):
             self.on_publish_template_changed
         )
 
+        self.file_template = QtWidgets.QLineEdit()
+        self.file_template.editingFinished.connect(
+            self.on_file_template_changed
+        )
+
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.addWidget(QtWidgets.QLabel('Projects Root'))
@@ -357,6 +365,8 @@ class ConfigForm(QtWidgets.QWidget):
         self.layout.addWidget(self.asset_template)
         self.layout.addWidget(QtWidgets.QLabel('Publish Template'))
         self.layout.addWidget(self.publish_template)
+        self.layout.addWidget(QtWidgets.QLabel('File Template'))
+        self.layout.addWidget(self.file_template)
         self.layout.addStretch()
         self.setLayout(self.layout)
 
@@ -366,6 +376,7 @@ class ConfigForm(QtWidgets.QWidget):
         self.projects_root.setText(lib.get_projects_root())
         self.asset_template.setText(lib.get_asset_template())
         self.publish_template.setText(lib.get_publish_template())
+        self.file_template.setText(lib.get_file_template())
 
     def on_projects_root_changed(self):
         lib.set_projects_root(self.projects_root.text())
@@ -393,4 +404,8 @@ class ConfigForm(QtWidgets.QWidget):
 
     def on_publish_template_changed(self):
         lib.set_publish_template(self.publish_template.text())
+        self.config_changed.emit()
+
+    def on_file_template_changed(self):
+        lib.set_file_template(self.file_template.text())
         self.config_changed.emit()
