@@ -24,7 +24,7 @@ Apply shadesets that you've exported for specific assets.
 2. In your outliner, select the top transform of the hierarchy you'd like to apply it to.
 3. Click apply.
 
-
+<img src="https://github.com/danbradham/shadeset/blob/master/images/ui_import.png"/>
 
 ## Export
 Export shadesets for an asset.
@@ -36,6 +36,8 @@ shading data for.
 3. Optionally provide a suffix like "red" or "green".
 4. Click export.
 
+<img src="https://github.com/danbradham/shadeset/blob/master/images/ui_export.png"/>
+
 ## Config
 Configure the projects root directory and templates used to lookup assets
 and publish root directories.
@@ -44,7 +46,7 @@ Templates must include {root}, {project} and {asset}. You may add additional
 fields as needed. The publish template should start with your asset template
 if you want to save shadesets into your asset folders.
 
-
+<img src="https://github.com/danbradham/shadeset/blob/master/images/ui_config.png"/>
 
 # API
 
