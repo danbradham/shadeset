@@ -1,0 +1,232 @@
+QDialog,
+QTabWidget {
+    background: rgb(68, 68, 68);
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
+QTabBar {
+    background: rgb(50, 50, 50);
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
+QTabBar::tab {
+    background: rgb(50, 50, 50);
+    padding: 10px;
+    border: 0;
+    border-radius: 0;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    color: rgb(76, 76, 76);
+}
+
+QTabBar::tab:hover {
+    color: rgb(126, 126, 126);
+}
+
+QTabBar::tab:selected {
+    background: rgb(68, 68, 68);
+    border: 0;
+    color: rgb(235, 235, 235);
+}
+
+QPushButton{
+    background-color: rgb(93, 93, 93);
+    font: 12pt "Arial";
+    border-radius: 3px;
+    padding: 0px 10px 0px 10px;
+    height: 30px;
+}
+QPushButton:hover{
+    background-color: rgb(109, 109, 109);
+}
+QPushButton:checked{
+    background-color: rgb(109, 109, 109);
+}
+QLabel{
+    font: 14pt "Arial";
+    color: rgb(215, 215, 215);
+}
+QLabel#clickable:hover{
+    font: 14pt "Arial";
+    color: rgb(255, 255, 255);
+}
+QCheckBox{
+    border-radius: 3px;
+    color: rgb(235, 235, 235);
+    font: 12pt "Arial";
+}
+QCheckBox::indicator{
+    border: 2px solid rgb(45, 45, 45);
+    background: rgb(45, 45, 45);
+}
+QCheckBox::indicator:checked{
+    border: 2px solid rgb(45, 45, 45);
+    background: rgb(235, 235, 235);
+}
+QStatusBar{
+    background: rgb(40, 40, 40)
+}
+
+QSpinBox,
+QDoubleSpinBox {
+    height: 30px;
+    background: rgb(55, 55, 55);
+    border: 0;
+    border-radius: 3px;
+    font: 12pt "Arial";
+    padding-left: 10;
+}
+
+QSpinBox:focus,
+QDoubleSpinBox:focus {
+    height: 30px;
+    background: rgb(45, 45, 45);
+    border: 0;
+    font: 12pt "Arial";
+    padding-left: 10;
+}
+
+QSpinBox:disabled,
+QDoubleSpinBox:disabled {
+    background: rgb(55, 55, 55);
+    color: rgb(235, 235, 235);
+    font: 10pt "Arial";
+    padding-left: 10;
+}
+
+QSpinBox::up-button,
+QDoubleSpinBox::up-button {
+    background: rgb(255, 255, 255, 0);
+    border-bottom: 5px solid rgb(185,185,185);
+    border-left: 5px solid rgb(255,255,255,0);
+    border-right: 5px solid rgb(255,255,255,0);
+    border-top: 0px solid rgb(235,235,235, 0);
+    margin-bottom: 2px;
+    margin-left: 3px;
+    margin-right: 3px;
+    margin-top: -2px;
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+}
+
+QSpinBox::down-button,
+QDoubleSpinBox::down-button {
+    background: rgb(255, 255, 255, 0);
+    border-bottom: 0px solid rgb(235,235,235, 0);
+    border-left: 5px solid rgb(255,255,255,0);
+    border-right: 5px solid rgb(255,255,255,0);
+    border-top: 5px solid rgb(185,185,185);
+    margin-bottom: -2px;
+    margin-left: 3px;
+    margin-right: 3px;
+    margin-top: 2px;
+    subcontrol-origin: border;
+    subcontrol-position: bottom right;
+}
+
+QLineEdit{
+    background: rgb(55, 55, 55);
+    color: white;
+    height: 30px;
+    font: 12pt "Arial";
+    border: 0;
+    border-radius: 3px;
+    padding: 0px 10px 0px 10px;
+}
+QLineEdit:focus{
+    background: rgb(45, 45, 45);
+}
+QLineEdit:disabled{
+    background: rgb(55, 55, 55);
+    color: grey;
+}
+
+QTreeView,
+QListWidget,
+QListView{
+    outline: 0;
+    border: 0;
+    border-radius: 3px;
+    background: rgb(45, 45, 45);
+}
+
+QTreeView:focus,
+QListWidget:focus{
+    border: 0px;
+}
+
+QListWidget::item,
+QTreeWidget::item,
+QTreeView::item{
+    padding: 5px;
+    border: 0px;
+    border-radius: 0px;
+    font: 12pt;
+}
+
+QListWidget::item:focus,
+QTreeWidget::item:focus,
+QTreeView::item:focus{
+    border: 0px;
+    outline: 0;
+}
+
+QListWidget::item:selected,
+QTreeWidget::item:selected,
+QTreeView::item:selected{
+    background: rgb(103, 141, 178);
+}
+
+QListWidget QLineEdit{
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    height: 30px;
+    border-radius: 15px;
+}
+
+
+QComboBox {
+    font: 12pt "Arial";
+    background: rgb(45, 45, 45);
+    color: rgb(235, 235, 235);
+    border: none;
+    outline: none;
+    padding-left: 10;
+    height: 30px;
+    border-radius: 3px;
+}
+
+QComboBox::drop-down{
+    margin-top: 12px;
+    border-top: 6px solid rgb(145,145,145);
+    border-right: 6px solid rgb(255,255,255,0);
+    border-left: 6px solid rgb(255,255,255,0);
+    margin-left: 2px;
+    margin-bottom: -1px;
+    margin-right: 2px;
+    border-bottom: 0px solid rgb(235,235,235, 0);
+    background: rgb(45, 45, 45);
+}
+
+QComboBox QAbstractItemView{
+    border: none;
+    outline: none;
+    background-color: rgb(100, 100, 100);
+    color: rgb(235, 235, 235);
+    selection-background-color: rgb(125, 125, 125);
+    selection-color:rgb(255, 255, 255);
+}
+
+QWidget#WindowHeader{
+    background: rgb(40, 40, 40);
+}
+
+QTextEdit{
+    border: 0;
+    border-radius: 3px;
+}

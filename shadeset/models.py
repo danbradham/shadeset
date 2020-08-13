@@ -12,7 +12,8 @@ import os
 class ShadeSet(dict):
     '''A dictionary subclass used to gather and export scene shading data
 
-    :param path: Path to loaded shadeset.yml file
+    Arguments:
+        path (str): Path to shadeset yml file.
     '''
 
     registry = set()
@@ -40,13 +41,14 @@ class ShadeSet(dict):
 
     @classmethod
     def gather(cls, selection=True, render_layers=False):
-        '''Gather shading data from a scene using the registered
-        :class:`Subset` s. Returns a new :class:`ShadeSet` object containing
-        the gathered data.
+        '''Gather shading data from a scene using all registered
+        `Subsets`.
 
-        :param selection: if True gather shading data for the selected
-            transforms
-        :param render_layers: if True shading data for all render layers
+        Arguments:
+            selection (bool): Gather shading data for the selected transforms
+
+        Returns:
+            ShadeSet object containing the gathered shading data.
         '''
 
         shade_set = cls()
@@ -74,19 +76,21 @@ class ShadeSet(dict):
 
     @utils.maintains_selection
     def reference(self):
-        '''Reference subset dependencies'''
+        '''Reference subset dependencies.'''
+
         for subset in self.registry:
             subset.reference(self)
 
     @utils.maintains_selection
     def import_(self):
-        '''Import subset dependencies'''
+        '''Import subset dependencies.'''
+
         for subset in self.registry:
             subset.import_(self)
 
     @utils.maintains_selection
     def apply(self, selection=False, render_layers=False):
-        '''Apply this :class:`ShadeSet` to the currently opened scene'''
+        '''Apply this `ShadeSet` to the currently opened scene'''
 
         for subset in self.registry:
             subset.apply(self, selection=selection)
@@ -111,9 +115,11 @@ class ShadeSet(dict):
 
     @utils.maintains_selection
     def export(self, outdir, name):
-        '''Export this :class:`ShadeSet` to a directory
+        '''Export this `ShadeSet` to a directory
 
-        :param outdir: Output directory
+        Arguments:
+            outdir (str): Output directory
+            name (str): Basename of output files
         '''
 
         made_dir = False

@@ -5,31 +5,31 @@ from .utils import selection, get_shapes_in_hierarchy
 from maya import cmds
 
 __all__ = [
+    'clear_registry',
     'gather',
     'gather_hierarchy',
     'load',
     'register_subset',
     'unregister_subset',
-    'clear_registry']
+]
 
 
 def gather(**kwargs):
-    '''Gather shading data from a scene using the registered
-    :class:`Subset` s. Returns a new :class:`ShadeSet` object containing
-    the gathered data.
+    '''Gather shading data from a scene using all registered
+    `Subsets`.
 
-    :param selection: if True gather shading data for the selected transforms
-    :param render_layers: if True gather shading data for all render layers
+    Arguments:
+        selection (bool): Gather shading data for the selected transforms
+
+    Returns:
+        ShadeSet object containing the gathered shading data.
     '''
 
     return ShadeSet.gather(**kwargs)
 
 
 def gather_hierarchy(**kwargs):
-    '''Gather shading data from the selected hierarchy
-
-    :param render_layers: if True gather shading data for all render layers
-    '''
+    '''Gather shading data from the selected hierarchy.'''
 
     kwargs['selection'] = True
 
@@ -45,38 +45,40 @@ def gather_hierarchy(**kwargs):
 
 
 def load(shade_path):
-    '''Load a :class:`ShadeSet` from disk.
+    '''Load a ShadeSet from disk.
 
-    :param shade_path: Path to shadeset.yml file
+    Arguments:
+        shade_path (str): Path to shadeset.yml file
     '''
 
     return ShadeSet.load(shade_path)
 
 
 def save(shade_set, outdir, name):
-    '''Save a :class:`Shadeset` to disk.
+    '''Save a Shadeset to disk.
 
-    :shade_set: :class:`ShadeSet` instance to save
-    :param outdir: Output directory of shadeset
-    :param name: basename of shadeset
+    Arguments:
+        shade_set (ShadeSet): shading data to save to write
+        outdir (str): Output directory
+        name (str): basename of Shadeset
     '''
 
     shade_set.export(outdir, name)
 
 
 def register_subset(subset):
-    '''Register a subset derived from :class:`SubSet`'''
+    '''Register a subset derived from SubSet'''
 
     ShadeSet.registry.add(subset)
 
 
 def unregister_subset(subset):
-    '''Unregister a subset derived from :class:`SubSet`'''
+    '''Unregister a subset derived from SubSet'''
 
     ShadeSet.registry.discard(subset)
 
 
 def clear_registry():
-    '''Unregister all :class:`SubSet`s'''
+    '''Unregister all SubSet'''
 
     ShadeSet.registry.clear()
