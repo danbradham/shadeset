@@ -165,7 +165,7 @@ class ImportForm(QtWidgets.QWidget):
         self.setLayout(self.layout)
 
         self.apply_button.clicked.connect(self.apply)
-        self.project.currentIndexChanged.connect(self.on_project_changed)
+        self.project.activated.connect(self.on_project_changed)
         self.asset.currentItemChanged.connect(self.on_asset_changed)
 
         self._projects = None
@@ -206,6 +206,8 @@ class ImportForm(QtWidgets.QWidget):
             index = self.project.findText(lib.session['project'])
             if index:
                 self.project.setCurrentIndex(index)
+
+        self.update_asset_widget()
 
     def add_asset(self, asset):
         item = QtWidgets.QListWidgetItem()
