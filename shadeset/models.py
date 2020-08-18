@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 
+# Standard library imports
+import os
+import shutil
 from collections import defaultdict
 from contextlib import contextmanager
+
+# Local imports
 from .packages import yaml
-from . import utils
-import maya.cmds as cmds
-import shutil
-import os
+from . import utils, lib
+
+# Third party imports
+from maya import cmds
 
 
 class ShadeSet(dict):

@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+# Third party imports
+from maya import cmds
+
+# Local imports
 from .models import ShadeSet
 from .utils import selection, get_shapes_in_hierarchy
-from maya import cmds
 
 __all__ = [
     'clear_registry',
