@@ -114,8 +114,6 @@ def selection(*args, **kwargs):
     try:
         cmds.select(*args, **kwargs)
         yield
-    except:
-        raise
     finally:
         cmds.select(old_selection)
 
