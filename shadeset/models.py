@@ -245,46 +245,8 @@ class ShadingGroupsSet(SubSet):
             utils.assign_shading_group(shading_group, members)
 
 
-class LayerMembershipSet(SubSet):
-
-    def gather(self, selection):
-
-        layer = RenderLayer.active()
-        if layer.name == 'defaultRenderLayer':
-            return {}
-
-        return {'layer_membership': utils.shorten_names(layer.members)}
-
-    def apply(self, shade_set, selection=False):
-        if 'layer_membership' not in shade_set:
-            return
-
-        layer = RenderLayer.active()
-
-        members = utils.find_members(shade_set['layer_membership'])
-
-        if selection:
-            nodes = cmds.ls(sl=True, long=True)
-            members = [m for m in members
-                       if utils.member_in_hierarchy(m, *nodes)]
-
-        if not members:
-            return
-
-        layer.add_members(members)
-
-
 class CustomAttributesSet(SubSet):
-
-    prefixes = os.environ.get(
-        'SHADESET_ATTRPREFIXES',
-        'mtoa_constant meta_'
-    ).split()
-
-    attributes = os.environ.get(
-        'SHADESET_ATTRIBUTES',
-        'aiOpaque'
-    ).split()
+    '''Gathers and Applies shape attributes by name and prefix.'''
 
     def gather(self, selection):
 
@@ -301,15 +263,16 @@ class CustomAttributesSet(SubSet):
         for shape in shapes:
             short_name = utils.shorten_name(shape)
             shape_data = {}
-            for prefix in self.prefixes:
+            for prefix in lib.get_export_attr_prefixes():
                 attrs = utils.get_prefixed_attrs(shape, prefix)
                 for attr in attrs:
                     shape_data[attr] = utils.get_attr_data(shape, attr)
 
-            for attr in self.attributes:
+            for attr in lib.get_export_attrs():
                 attr_path = shape + '.' + attr
                 if cmds.objExists(attr_path):
                     shape_data[attr] = utils.get_attr_data(shape, attr)
+
             data[short_name] = shape_data
 
         return {'customAttributes': data}
@@ -350,7 +313,6 @@ class ObjectSetsSet(SubSet):
 
 
 ShadeSet.registry.add(ShadingGroupsSet())
-# ShadeSet.registry.add(LayerMembershipSet())
 ShadeSet.registry.add(CustomAttributesSet())
 ShadeSet.registry.add(ObjectSetsSet())
 
@@ -420,7 +382,5 @@ def RenderLayers(layers):
 
     try:
         yield (RenderLayer(layer) for layer in layers)
-    except:
-        raise
     finally:
         old_layer.activate()

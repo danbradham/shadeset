@@ -1,6 +1,5 @@
 # -*- cofing: utf-8 -*-
 import os
-import sys
 
 
 if 'USERPROFILE' in os.environ:
@@ -22,7 +21,18 @@ publish_template = os.getenv(
     'SHADESET_PUBLISH',
     '{root}/{project}/{asset_type}/{asset}/publish/shadesets'
 )
+
 file_template = os.getenv(
     'SHADESET_FILE',
     '{name}_v{version:>03d}.{ext}'
 )
+
+prefixes = os.getenv(
+    'SHADESET_ATTRPREFIXES',
+    'mtoa_constant meta_'
+).split()
+
+attributes = os.getenv(
+    'SHADESET_ATTRIBUTES',
+    'aiOpaque'
+).split()

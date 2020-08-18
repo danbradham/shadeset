@@ -228,3 +228,27 @@ def get_next_publish(asset, name):
             **fields
         )
         return publish
+
+
+def get_export_attr_prefixes():
+    '''Get the list of attribute prefixes to include in publishes'''
+
+    return config.prefixes
+
+
+def set_export_attr_prefixes(prefixes):
+    '''Set the list of attribute prefixes to include in publishes'''
+
+    config.prefixes = prefixes
+
+
+def get_export_attrs():
+    '''Get the list of attributes to include in publishes'''
+
+    return config.attributes
+
+
+def set_export_attrs(attrs):
+    '''Set the list of attributes to include in publishes'''
+
+    config.attributes = attrs
