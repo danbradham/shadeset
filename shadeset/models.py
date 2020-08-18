@@ -134,7 +134,7 @@ class ShadeSet(dict):
 
         try:
             self._export(outdir, name)
-        except:
+        except Exception:
             if made_dir:
                 shutil.rmtree(outdir)
             raise
@@ -152,6 +152,7 @@ class ShadeSet(dict):
 
 
 class SubSet(object):
+    '''Base class for all subsets of shading data.'''
 
     def gather(self, selection):
         raise NotImplementedError()
@@ -170,6 +171,7 @@ class SubSet(object):
 
 
 class ShadingGroupsSet(SubSet):
+    '''Gathers and Applies shader assignments.'''
 
     def path(self, shade_set):
         return os.path.join(
