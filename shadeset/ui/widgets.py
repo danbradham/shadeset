@@ -37,11 +37,27 @@ class ExportForm(QtWidgets.QWidget):
         self.selection.setChecked(True)
         self.render_layers = QtWidgets.QCheckBox('&Render Layers')
         self.export_button = QtWidgets.QPushButton('&Export Shadeset')
+        self.attr_prefixes_label = QtWidgets.QLabel('Attribute Prefixes')
+        self.attr_prefixes_label.setToolTip(
+            'Space separated list of attribute prefixes to include in export.'
+        )
+        self.attr_prefixes = QtWidgets.QLineEdit()
+        self.attr_prefixes.setText(' '.join(lib.get_export_attr_prefixes()))
+        self.attrs_label = QtWidgets.QLabel('Attributes')
+        self.attrs_label.setToolTip(
+            'Space separated list of attributes to include in export.'
+        )
+        self.attrs = QtWidgets.QLineEdit()
+        self.attrs.setText(' '.join(lib.get_export_attrs()))
 
         options = QtWidgets.QGroupBox()
         options_layout = QtWidgets.QVBoxLayout()
         options_layout.addWidget(self.selection)
         options_layout.addWidget(self.render_layers)
+        options_layout.addWidget(self.attr_prefixes_label)
+        options_layout.addWidget(self.attr_prefixes)
+        options_layout.addWidget(self.attrs_label)
+        options_layout.addWidget(self.attrs)
         options.setLayout(options_layout)
 
         self.layout = QtWidgets.QVBoxLayout()
@@ -73,6 +89,8 @@ class ExportForm(QtWidgets.QWidget):
             suffix=self.suffix.text(),
             selection=self.selection.isChecked(),
             render_layers=self.render_layers.isChecked(),
+            attr_prefixes=self.attr_prefixes.text().split(),
+            attrs=self.attrs.text().split()
         )
 
     def add_asset(self, asset):
@@ -104,6 +122,12 @@ class ExportForm(QtWidgets.QWidget):
         # TODO: move to controller
 
         state = self.state()
+
+        # Update export attribute settings
+        # These are used by CustomAttributesSet
+        lib.set_export_attrs(state['attrs'])
+        lib.set_export_attr_prefixes(state['attr_prefixes'])
+
         if not state['asset']:
             self.preview.setText('Select an asset...')
             return
