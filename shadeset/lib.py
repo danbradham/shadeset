@@ -41,7 +41,20 @@ def set_projects_root(path):
 def get_projects():
     '''Get a list of projects'''
 
-    return os.listdir(get_projects_root())
+    projects_root = get_projects_root()
+    projects = []
+    for item in os.listdir(get_projects_root()):
+
+        path = normalize(projects_root, item)
+        if os.path.isfile(path):
+            continue
+
+        if item.startswith('.'):
+            continue
+
+        projects.append(item)
+
+    return projects
 
 
 def set_project(project):
@@ -99,8 +112,21 @@ def get_assets(project, **query):
 
     assets = {}
     for path in sorted(glob(lookup_pattern)):
+
+        # Skip loose files
+        if os.path.isfile(path):
+            continue
+
+        # Skip folders beginning with .
+        if os.path.basename(path).startswith('.'):
+            continue
+
         path = normalize(path)
         fields = tmpl.parse(path)
+        if fields is None:
+            print('shadeset| Failed to parse: ' + path)
+            continue
+
         asset = dict(
             path=path,
             **fields
@@ -108,6 +134,12 @@ def get_assets(project, **query):
         assets[fields['asset']] = asset
 
     return assets
+
+
+def set_asset(asset):
+    '''Set the active asset.'''
+
+    session['asset'] = asset
 
 
 def get_asset(project, asset, **query):
@@ -179,8 +211,17 @@ def get_publishes(asset, name=None):
 
     publishes = {}
     for path in sorted(glob(publish_lookup)):
+
+        # Skip private files
+        if os.path.basename(path).startswith('.'):
+            continue
+
         path = normalize(path)
         fields = publish_tmpl.parse(path)
+        if fields is None:
+            print('shadeset| Failed to parse: ' + path)
+            continue
+
         publish = dict(
             path=path,
             basename=os.path.basename(path),
