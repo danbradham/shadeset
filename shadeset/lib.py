@@ -166,7 +166,7 @@ def set_publish_template(template):
     Examples:
         Publish:   C:/projects/my_project/assets/asset_a/publish/shadesets
                    C:/projects/my_project/shots/shot_010/publish/shadesets
-        Template:  {root}/{project}/{folder}/{asset}/publish/ssets
+        Template:  {root}/{project}/{folder}/{asset}/publish/shadesets
     '''
     config.publish_template = template
 
