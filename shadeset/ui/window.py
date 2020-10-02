@@ -14,6 +14,12 @@ from .Qt import QtWidgets
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 from maya import OpenMayaUI
 
+# Compatability
+try:
+    long
+except NameError:
+    long = int
+
 
 class ShadesetUI(MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
