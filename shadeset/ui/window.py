@@ -23,6 +23,8 @@ except NameError:
 
 class ShadesetUI(MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
+    _instance = None
+
     def __init__(self, *args, **kwargs):
         super(ShadesetUI, self).__init__(*args, **kwargs)
 
@@ -63,18 +65,25 @@ class ShadesetUI(MayaQWidgetDockableMixin, QtWidgets.QWidget):
         pass
 
 
-def show(cache={}, restore=False):
-    if 'window' not in cache:
-        cache['window'] = ShadesetUI()
-        workspace_control = OpenMayaUI.MQtUtil.getCurrentParent()
-        pointer = OpenMayaUI.MQtUtil.findControl(cache['window'].objectName())
-        OpenMayaUI.MQtUtil.addWidgetToMayaLayout(
-            long(pointer),
-            long(workspace_control),
-        )
+def restore():
+    '''Called when Maya opens to restore the Shadeset UI.'''
 
-    if not restore:
-        cache['window'].show(
-            dockable=True,
-            uiScript='import shadeset.ui;shadeset.ui.show(restore=True)'
-        )
+    workspace_control = OpenMayaUI.MQtUtil.getCurrentParent()
+    ShadesetUI._instance = ShadesetUI()
+    pointer = OpenMayaUI.MQtUtil.findControl(ShadesetUI._instance.objectName())
+    OpenMayaUI.MQtUtil.addWidgetToMayaLayout(
+        long(pointer),
+        long(workspace_control),
+    )
+
+
+def show(**kwargs):
+    '''Show the Shadeset UI.'''
+
+    if ShadesetUI._instance is None:
+        ShadesetUI._instance = ShadesetUI()
+
+    ShadesetUI._instance.show(
+        dockable=True,
+        uiScript='import shadeset.ui.window; shadeset.ui.window.restore()'
+    )
