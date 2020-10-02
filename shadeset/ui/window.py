@@ -10,7 +10,7 @@ from .widgets import (
 )
 
 # Third party imports
-from Qt import QtWidgets
+from .Qt import QtWidgets
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 from maya import OpenMayaUI
 

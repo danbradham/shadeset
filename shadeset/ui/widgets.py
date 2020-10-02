@@ -10,7 +10,7 @@ from . import res
 from .. import api, lib, utils
 
 # Third party imports
-from Qt import QtCore, QtGui, QtWidgets
+from .Qt import QtCore, QtGui, QtWidgets
 
 
 class WindowHeader(QtWidgets.QLabel):
