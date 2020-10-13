@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shadeset"
-version = "0.6.0"
+version = "0.6.1"
 description = "Autodesk Maya scene shading exporter."
 authors = ["Dan Bradham <danielbradham@gmail.com>"]
 license = "MIT"

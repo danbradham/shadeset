@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import unittest
-import shutil
 import os
 from shadeset import ShadeSet
 from . import data_path
@@ -13,7 +12,6 @@ def setUpModule():
 
 def tearDownModule():
     standalone.uninitialize()
-    #shutil.rmtree(data_path('testset'))
 
 
 class TestShadeSet(unittest.TestCase):

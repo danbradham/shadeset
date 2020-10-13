@@ -283,7 +283,7 @@ class ImportForm(QtWidgets.QWidget):
                             'a shadeset.')
 
         reference_shadeset = True
-        pattern = publish['path'].split('.')[0] + '*_shadingGroups.mb'
+        pattern = publish['path'].split('.')[0] + '.*_shadingGroups.mb'
         shaders_path = publish['path'].replace('.yml', '_shadingGroups.mb')
         norm_path = os.path.normpath(shaders_path)
         file_name = os.path.basename(norm_path)
