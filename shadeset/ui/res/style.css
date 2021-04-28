@@ -15,8 +15,9 @@ QTabBar {
 
 QTabBar::tab {
     background: rgb(50, 50, 50);
-    padding: 10px;
-    border: 0;
+    padding: 4px 12px;
+    border: 1 solid rgb(40, 40, 40);
+    border-bottom: 0;
     border-radius: 0;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
@@ -34,31 +35,31 @@ QTabBar::tab:selected {
     color: rgb(235, 235, 235);
 }
 
-QPushButton{
+QPushButton {
     background-color: rgb(93, 93, 93);
-    font: 12pt "Arial";
     border-radius: 3px;
     padding: 0px 10px 0px 10px;
-    height: 30px;
+    height: 24px;
 }
-QPushButton:hover{
+QPushButton:hover {
     background-color: rgb(109, 109, 109);
 }
-QPushButton:checked{
+QPushButton:checked {
     background-color: rgb(109, 109, 109);
 }
 QLabel{
-    font: 14pt "Arial";
     color: rgb(215, 215, 215);
 }
 QLabel#clickable:hover{
-    font: 14pt "Arial";
     color: rgb(255, 255, 255);
+}
+QLabel#h1 {
+    font: 14pt;
 }
 QCheckBox{
     border-radius: 3px;
     color: rgb(235, 235, 235);
-    font: 12pt "Arial";
+    font: 10pt;
 }
 QCheckBox::indicator{
     border: 2px solid rgb(45, 45, 45);
@@ -74,20 +75,19 @@ QStatusBar{
 
 QSpinBox,
 QDoubleSpinBox {
-    height: 30px;
+    height: 24px;
+    width: 80px;
     background: rgb(55, 55, 55);
     border: 0;
     border-radius: 3px;
-    font: 12pt "Arial";
     padding-left: 10;
 }
 
 QSpinBox:focus,
 QDoubleSpinBox:focus {
-    height: 30px;
+    height: 24px;
     background: rgb(45, 45, 45);
     border: 0;
-    font: 12pt "Arial";
     padding-left: 10;
 }
 
@@ -95,7 +95,7 @@ QSpinBox:disabled,
 QDoubleSpinBox:disabled {
     background: rgb(55, 55, 55);
     color: rgb(235, 235, 235);
-    font: 10pt "Arial";
+    font: 10pt;
     padding-left: 10;
 }
 
@@ -132,8 +132,7 @@ QDoubleSpinBox::down-button {
 QLineEdit{
     background: rgb(55, 55, 55);
     color: white;
-    height: 30px;
-    font: 12pt "Arial";
+    height: 24px;
     border: 0;
     border-radius: 3px;
     padding: 0px 10px 0px 10px;
@@ -166,7 +165,6 @@ QTreeView::item{
     padding: 5px;
     border: 0px;
     border-radius: 0px;
-    font: 12pt;
 }
 
 QListWidget::item:focus,
@@ -186,24 +184,24 @@ QListWidget QLineEdit{
     padding: 0px;
     margin: 0px;
     border: 0px;
-    height: 30px;
-    border-radius: 15px;
+    height: 24px;
+    border-radius: 3px;
 }
 
-
 QComboBox {
-    font: 12pt "Arial";
     background: rgb(45, 45, 45);
     color: rgb(235, 235, 235);
     border: none;
     outline: none;
     padding-left: 10;
-    height: 30px;
+    height: 24px;
     border-radius: 3px;
 }
-
+QComboBox:hover {
+    background: rgb(55, 55, 55);
+}
 QComboBox::drop-down{
-    margin-top: 12px;
+    margin-top: 10px;
     border-top: 6px solid rgb(145,145,145);
     border-right: 6px solid rgb(255,255,255,0);
     border-left: 6px solid rgb(255,255,255,0);
@@ -211,11 +209,12 @@ QComboBox::drop-down{
     margin-bottom: -1px;
     margin-right: 2px;
     border-bottom: 0px solid rgb(235,235,235, 0);
-    background: rgb(45, 45, 45);
+    background: rgb(0, 0, 0, 0);
 }
 
 QComboBox QAbstractItemView{
     border: none;
+    border-radius: 0;
     outline: none;
     background-color: rgb(100, 100, 100);
     color: rgb(235, 235, 235);

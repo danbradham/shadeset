@@ -13,12 +13,25 @@ from .. import api, lib, utils
 from .Qt import QtCore, QtGui, QtWidgets
 
 
-class WindowHeader(QtWidgets.QLabel):
+class WindowHeader(QtWidgets.QWidget):
 
     def __init__(self, img, parent=None):
         super(WindowHeader, self).__init__(parent)
+
         self.setObjectName("WindowHeader")
-        self.setPixmap(QtGui.QPixmap(QtGui.QImage(img)))
+        self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+
+        self.image = QtWidgets.QLabel()
+        self.image.setPixmap(QtGui.QPixmap(img))
+        self.label = QtWidgets.QLabel('ShadeSets')
+        self.label.setObjectName('h1')
+
+        self.layout = QtWidgets.QHBoxLayout()
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.addWidget(self.image)
+        self.layout.addWidget(self.label)
+        self.layout.setStretch(1, 1)
+        self.setLayout(self.layout)
 
 
 class ExportForm(QtWidgets.QWidget):

@@ -22,6 +22,16 @@ def normalize(*parts):
     return os.path.normpath(os.path.join(*parts)).replace('\\', '/')
 
 
+def guess_project():
+    '''Guess Project from Maya Workspace.'''
+
+    from maya import cmds
+    workspace = cmds.workspace(query=True, rootDirectory=True)
+    for project in get_projects():
+        if project in workspace:
+            return project
+
+
 def get_projects_root():
     '''Get the directory containing your projects.
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Local imports
+from .. import lib
 from . import res
 from .widgets import (
     ConfigForm,
@@ -33,7 +34,6 @@ class ShadesetUI(MayaQWidgetDockableMixin, QtWidgets.QWidget):
         self.tabs.setDocumentMode(True)
         tabs_bar = self.tabs.tabBar()
         tabs_bar.setDrawBase(False)
-        tabs_bar.setExpanding(True)
         self.import_tab = ImportForm(self.tabs)
         self.export_tab = ExportForm(self.tabs)
         self.config_tab = ConfigForm(self.tabs)
@@ -68,6 +68,10 @@ class ShadesetUI(MayaQWidgetDockableMixin, QtWidgets.QWidget):
 def restore():
     '''Called when Maya opens to restore the Shadeset UI.'''
 
+    # Set initial state
+    if not lib.session['project']:
+        lib.session['project'] = lib.guess_project()
+
     workspace_control = OpenMayaUI.MQtUtil.getCurrentParent()
     ShadesetUI._instance = ShadesetUI()
     pointer = OpenMayaUI.MQtUtil.findControl(ShadesetUI._instance.objectName())
@@ -81,6 +85,11 @@ def show(**kwargs):
     '''Show the Shadeset UI.'''
 
     if ShadesetUI._instance is None:
+
+        # Set initial state
+        if not lib.session['project']:
+            lib.session['project'] = lib.guess_project()
+
         ShadesetUI._instance = ShadesetUI()
 
     ShadesetUI._instance.show(
