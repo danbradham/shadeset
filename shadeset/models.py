@@ -185,6 +185,7 @@ class ShadingGroupsSet(SubSet):
 
         if selection:
             transforms = cmds.ls(sl=True, long=True)
+            short_transforms = utils.shorten_names(transforms)
         else:
             transforms = cmds.ls(long=True, transforms=True)
 
@@ -202,8 +203,12 @@ class ShadingGroupsSet(SubSet):
                 continue
 
             _id = utils.add_id(sg)
+
             members = utils.filter_bad_face_assignments(members)
+            if selection:
+                members = [m for m in members if m in short_transforms]
             members = utils.shorten_names(members)
+
             data[str(sg)] = {
                 'meta_id': _id,
                 'members': members,

@@ -424,8 +424,9 @@ def find_members(members):
 
 
 def member_in_hierarchy(member, *candidates):
+    parents = get_parents(member)
     for candidate in candidates:
-        if candidate in get_parents(member):
+        if candidate in parents:
             return True
 
 
