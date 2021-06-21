@@ -2,8 +2,11 @@
 
 # Third party imports
 from maya import cmds
+from maya.utils import executeDeferred
+
 
 # Local imports
+from . import callbacks, tools
 from .models import ShadeSet
 from .utils import selection, get_shapes_in_hierarchy
 
@@ -14,6 +17,8 @@ __all__ = [
     'load',
     'register_subset',
     'unregister_subset',
+    'install',
+    'uninstall',
 ]
 
 
@@ -85,3 +90,22 @@ def clear_registry():
     '''Unregister all SubSet'''
 
     ShadeSet.registry.clear()
+
+
+def install():
+    '''Call in userSetup.py to install callbacks and menu items.'''
+
+    print('INSTALLING SHADESET')
+    callbacks.add_mel_proc_callback(
+        'OutlinerEdMenuCommand',
+        tools.create_outliner_menu,
+    )
+
+
+def uninstall():
+    '''Call uninstall callbacks and menu items.'''
+
+    callbacks.remove_mel_proc_callback(
+        'OutlinerEdMenuCommand',
+        tools.create_outliner_menu,
+    )
