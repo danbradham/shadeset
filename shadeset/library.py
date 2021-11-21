@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
-'''
-Simple pipeline api used to find projects, assets and published shadesets.
-'''
+from __future__ import absolute_import, print_function
 
 # Standard library imports
 import os
 from glob import glob
 
 # Local imports
+from .packages import pat
 from . import config
-from . import pat
 
 
 session = {
@@ -134,7 +132,7 @@ def get_assets(project, **query):
         path = normalize(path)
         fields = tmpl.parse(path)
         if fields is None:
-            print('shadeset| Failed to parse: ' + path)
+            print('shadeset: Failed to parse: ' + path)
             continue
 
         asset = dict(
@@ -229,7 +227,7 @@ def get_publishes(asset, name=None):
         path = normalize(path)
         fields = publish_tmpl.parse(path)
         if fields is None:
-            print('shadeset| Failed to parse: ' + path)
+            print('shadeset: Failed to parse: ' + path)
             continue
 
         publish = dict(

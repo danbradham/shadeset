@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-'''
-shadeset lite
--------------
-'''
+from __future__ import absolute_import, print_function
 
 # Standard library imports
 from collections import defaultdict
@@ -19,6 +16,25 @@ try:
 except NameError:
     basestring = (str, bytes)
 
+VALID_SHAPES = ('mesh', 'nurbsSurface', 'aiStandIn', 'gpuCache')
+
+
+def is_valid_shape(shape):
+    return cmds.nodeType(shape) in VALID_SHAPES
+
+
+def get_shape(xform):
+    if is_valid_shape(xform):
+        return xform
+    shapes = cmds.listRelatives(
+        xform,
+        shapes=True,
+        noIntermediate=True,
+        fullPath=True,
+    )
+    if shapes and is_valid_shape(shapes[0]):
+        return shapes[0]
+
 
 def get_selected():
     '''Get selected dag nodes.'''
@@ -32,10 +48,21 @@ def get_hierarchy(root):
     args = () if root == '|' else (root,)
     return cmds.ls(
         *args,
-        dag=True,
-        noIntermediate=True,
-        long=True,
+        **dict(
+            dag=True,
+            noIntermediate=True,
+            long=True,
+        )
     )
+
+
+def get_shading_engine(node):
+    shading_engines = cmds.ls(
+        cmds.listHistory(node, future=True),
+        type='shadingEngine',
+    )
+    if shading_engines:
+        return shading_engines[0]
 
 
 def get_shading_engines(*nodes):
@@ -227,12 +254,16 @@ def find_matching_paths(path, root='|', namespace=None, strict=False):
     if strict:
         pattern = '*|' + path
     else:
+        # Only match direct descendants of root
+        # pattern = root.rstrip('|') + '|' + path.partition('|')[-1]
+
+        # Match deep
         pattern = '*|' + path.partition('|')[-1]
 
     for match in cmds.ls(pattern, long=True, recursive=True):
         if namespace and not match.rpartition('|')[-1].startswith(namespace):
             continue
-        if not match.startswith(root):
+        if not match.startswith(root.rstrip('|') + '|'):
             continue
         results.append(match)
 
@@ -287,7 +318,7 @@ def find_shading_engine(shading_engine, uuid=None, namespace=None):
         return uuid_matches[0]
 
 
-def apply_material_assignments(
+def apply_material_assignments_v0(
     assignments,
     root='|',
     member_namespace=None,
@@ -336,7 +367,7 @@ def apply_material_assignments(
                 assignees = []
                 for match in matches:
                     assignees.extend([
-                        f'{match}.{comp}'
+                        '{}.{}'.format(match, comp)
                         for comp in member['components']
                     ])
             else:
@@ -345,256 +376,99 @@ def apply_material_assignments(
             assign_shading_engine(matching_shading_engine, assignees)
 
 
-def get_attr(path, attr):
-    attr_path = path + '.' + attr
-    if not cmds.attributeQuery(attr, node=path, exists=True):
-        return
-
-    value = cmds.getAttr(attr_path)
-    if isinstance(value, list) and isinstance(value[0], tuple):
-        value = value[0]
-
-    return value
-
-
-def get_type_kwarg_from_value(value):
-    if not isinstance(value, (list, tuple)):
-        value = [value]
-    type_key = tuple([type(v) for v in value])
-    return {
-        (str,): {'dt': 'string'},
-        (float,): {'at': 'double'},
-        (float,float): {'at': 'double2'},
-        (float,float,float): {'at': 'double3'},
-        (int,): {'at': 'long'},
-        (int,int): {'at': 'long2'},
-        (int,int,int): {'at': 'long3'},
-        (bool,): {'at': 'bool'},
-    }.get(type_key)
-
-
-def get_type_flag(type, compound=False):
-    if compound:
-        return 'attributeType'
-    return ('attributeType', 'dataType')[type in {
-        'matrix', 'string', 'stringArray', 'doubleArray', 'Int32Array',
-        'reflectance', 'spectrum', 'float2', 'float3', 'double2',
-        'double3', 'long2', 'long3', 'short2', 'short3', 'vectorArray',
-        'nurbsCurve', 'nurbsSurface', 'mesh', 'lattice', 'pointArray'
-    }]
-
-
-def is_unpackable(type):
-    return type in {
-        'float2', 'float3', 'double2', 'double3', 'long2', 'long3',
-        'compound', 'spectrum', 'reflectance', 'matrix', 'fltMatrix',
-        'reflectanceRBG', 'spectrumRGB', 'short2', 'short3', 'doubleArray',
-        'Int32Array', 'vectorArray'
-    }
-
-
-def is_typeable(type):
-    return type in {
-        'float2', 'float3', 'double2', 'double3', 'long2', 'long3',
-        'compound', 'spectrum', 'reflectance', 'matrix', 'fltMatrix',
-        'reflectanceRBG', 'spectrumRGB', 'short2', 'short3', 'doubleArray',
-        'Int32Array', 'vectorArray', 'string', 'byte'
-    }
-
-
-def get_attr_schema(path, attr):
-    if not cmds.attributeQuery(attr, node=path, exists=True):
-        return
-
-    children = []
-    child_attrs = cmds.attributeQuery(attr, node=path, listChildren=True) or []
-    for child_attr in child_attrs:
-        children.append(
-            {
-                'type': cmds.getAttr(path + '.' + child_attr, type=True),
-                'longName': child_attr,
-                'keyable': cmds.attributeQuery(child_attr, node=path, k=True),
-                'parent': attr,
-            }
-        )
-
-    enumName = cmds.attributeQuery(attr, node=path, listEnum=True)
-    if enumName:
-        enumName = enumName[0]
-
-    attr_path = path + '.' + attr
-    return {
-        'type': cmds.getAttr(attr_path, type=True),
-        'longName': attr,
-        'shortName': cmds.attributeName(attr_path, short=True),
-        'niceName': cmds.attributeName(attr_path, nice=True),
-        'children': children,
-        'enumName': enumName,
-        'keyable': (
-            cmds.getAttr(attr_path, keyable=True) or
-            cmds.getAttr(attr_path, channelBox=True)
-        ),
-        'usedAsColor': cmds.attributeQuery(attr, node=path, usedAsColor=True),
-    }
-
-
-def get_attrs_with_prefix(path, prefix):
-    '''Get all attributes with the specified prefix'''
-
-    return [attr for attr in cmds.listAttr(path) if attr.startswith(prefix)]
-
-
-def collect_attributes(root, attributes, attribute_prefixes=None):
-    '''Collect attributes from a hierarchy.
-
-    Arguments:
-        root (str): Root dag path.
-        attributes (list): List of attributes to collect.
-        attribute_prefixes (list): List of attribute_prefixes to collect.
-
-    Returns:
-        dict containing attribute schemas and attribute values by dag path.
-
-    Example Return Value::
-
-        {
-            'schemas': {
-                'visibility': {
-                    'type': 'bool',
-                    'type_option': 'attributeType',
-                    'keyable': True,
-                }
-            },
-            'values': {
-                '|geo|aShape1': {
-                    'visibility': True,
-                }
-            },
-        }
-    '''
-
-    results = {'schemas': defaultdict(dict), 'values': defaultdict(dict)}
-
-    attribute_prefixes = attribute_prefixes or []
-    hierarchy = get_hierarchy(root)
-
-    for path in hierarchy:
-        clean_path = get_relative_paths([path], root)[0]
-        clean_path = remove_namespaces([clean_path])[0]
-        for attr in attributes:
-
-            if attr not in results['schemas']:
-                schema = get_attr_schema(path, attr)
-                if schema:
-                    results['schemas'][attr] = schema
-
-            value = get_attr(path, attr)
-            if value is not None:
-                results['values'][clean_path][attr] = value
-
-        for attr_prefix in attribute_prefixes:
-            for attr in get_attrs_with_prefix(path, attr_prefix):
-
-                if cmds.attributeQuery(attr, node=path, listParent=True):
-                    # Skip child attributes assuming that the attributes
-                    # parent will already be collected.
-                    continue
-
-                if attr not in results['schemas']:
-                    schema = get_attr_schema(path, attr)
-                    if schema:
-                        results['schemas'][attr] = schema
-
-                value = get_attr(path, attr)
-                if value is not None:
-                    results['values'][clean_path][attr] = value
-
-    return results
-
-
-def add_attr_from_schema(path, schema=None):
-
-    # Setup schema for addAttr
-    schema = dict(schema)
-    children = schema.pop('children', [])
-    attr_type = schema.pop('type')
-    schema[get_type_flag(attr_type, compound=bool(children))] = attr_type
-    if schema['enumName'] is None:
-        schema.pop('enumName')
-
-    # Add attribute
-    cmds.addAttr(path, **schema)
-
-    # Add child attributes
-    for child in children:
-        child_schema = dict(child)
-        child_type = child_schema.pop('type')
-        child_schema[get_type_flag(child_type)] = child_type
-        cmds.addAttr(path, **child_schema)
-
-
-def set_attr(path, attr, value, schema=None):
-    args = [path + '.' + attr]
-    kwargs = {}
-
-    if schema:
-        attr_type = schema['type']
-        if is_unpackable(attr_type):
-            args.extend(value)
-        else:
-            args.append(value)
-
-        if is_typeable(attr_type):
-            kwargs['type'] = schema['type']
-    else:
-        if isinstance(type, (list, tuple)):
-            args.extend(value)
-        else:
-            args.append(value)
-        if isinstance(type, basestring):
-            kwargs['type'] = 'string'
-
-    try:
-        cmds.setAttr(*args, **kwargs)
-    except RuntimeError as e:
-        if 'locked or connected' in str(e):
-            cmds.warning(str(e).split(':', 1)[-1].rstrip())
-
-
-def apply_attributes(
-    attributes,
+def apply_material_assignments(
+    assignments,
     root='|',
-    namespace=None,
+    member_namespace=None,
+    material_namespace=None,
     strict=False,
 ):
-    '''Set attributes on dag paths listed in an attributes dict.
+    '''Apply shadingEngines to members listed in an assignments dict.
 
     Arguments:
-        attributes (dict): Like the results of collect_attributes
+        assignments (dict): Like the results of collect_material_assignments
         root (str): Apply shadingEngines only to members found under this
             dag path. Defaults to '|' matching any node in the scene.
-        namespace (str): Namespace containing dag paths to set attrs on.
-        strict (bool): When strict is False, the first element of a path is
+        strict (bool): When strict is False, the first element of the member is
             removed, allowing members in hierarchies that match but may be
             under a different root node. Defaults to False.
+        member_namespace (str): Namespace containing shadingEngine set members.
+        material_namespace (str): Namespace containing shadingEngines.
     '''
 
-    for path, attrs in attributes['values'].items():
+    matched_member_assignments = defaultdict(list)
+    best_shading_assignments = defaultdict(list)
 
-        matching_paths = find_matching_paths(path, root, namespace, strict)
+    import json
 
-        for attr, value in attrs.items():
+    print('============ASSIGNMENTS=============')
+    print(json.dumps(assignments, indent=4))
 
-            schema = attributes['schemas'].get(attr)
+    for shading_engine, data in assignments.items():
 
-            for path in matching_paths:
-                attr_path = path + '.' + attr
-                if not cmds.attributeQuery(attr, node=path, exists=True):
-                    if schema:
-                        add_attr_from_schema(path, schema)
-                    else:
-                        kwargs = {'ln': attr, 'k': True}
-                        kwargs.update(get_type_kwarg_from_value(value))
-                        cmds.addAttr(path, **kwargs)
+        matching_shading_engine = find_shading_engine(
+            shading_engine.rpartition(':')[-1],
+            data['meta_uuid'],
+            material_namespace,
+        )
+        if not shading_engine:
+            print(
+                'Warning: Could not find shadingEngine named %s.' %
+                shading_engine
+            )
+            continue
 
-                set_attr(path, attr, value, schema)
+        for member in data['members']:
+
+            matches = find_matching_paths(
+                member['path'],
+                root,
+                member_namespace,
+                strict,
+            )
+            if not matches:
+                continue
+
+            for match in matches:
+                matched_member_assignments[match].append({
+                    'member': member,
+                    'shadingEngine': shading_engine,
+                })
+
+    print('============MATCHED_MEMBER_ASSIGNMENTS=============')
+    print(json.dumps(matched_member_assignments, indent=4))
+
+    for path, assignments in matched_member_assignments.items():
+        # The best assignment is the one that matches the most parts of
+        # the path.
+        best_assignment = max(
+            assignments,
+            key=lambda x: x['member']['path'].count('|')
+        )
+
+        # If there are multiple assignments matching the best path,
+        # we are dealing with component assignments and we need to grab all
+        # those assignments.
+        best_path = best_assignment['member']['path']
+        for assignment in assignments:
+            if assignment['member']['path'] == best_path:
+                best_shading_assignments[assignment['shadingEngine']].append({
+                    'path': path,
+                    'components': assignment['member']['components'],
+                })
+
+    print('============BEST_SHADING_ASSIGNMENTS=============')
+    print(json.dumps(best_shading_assignments, indent=4))
+
+    for shading_engine, members in best_shading_assignments.items():
+        assignees = []
+        for member in members:
+            if member['components']:
+                assignees.extend([
+                    '{}.{}'.format(member['path'], comp)
+                    for comp in member['components']
+                ])
+            else:
+                assignees.append(member['path'])
+
+        assign_shading_engine(shading_engine, assignees)

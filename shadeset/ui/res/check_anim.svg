@@ -1,0 +1,75 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="30" cy="123" r="12" fill="#6CBA82"/>
+<circle cx="0" cy="0" r="12" fill="#6CBA82">
+    <animateTransform
+        attributeName="transform"
+        type="translate"
+        dur="0.3367"
+        calcMode="spline"
+        values="30,123;99,192;99,192;99,192"
+        keyTimes="0; 0.25; 0.4; 1"
+        keySplines="0.5 0 0.5 1;
+                    0 0 0 1;
+                    0.25 0 0.5 1;"
+        fill="freeze"
+    />
+</circle>
+<circle cx="0" cy="0" r="12" fill="#6CBA82">
+    <animateTransform
+        attributeName="transform"
+        type="translate"
+        calcMode="spline"
+        dur="0.3367"
+        values="30,123;99,192;99,192;226,65"
+        keyTimes="0; 0.25; 0.4; 1"
+        keySplines="0.5 0 0.5 1;
+                    0 0 0 1;
+                    0.25 0 0.5 1;"
+        fill="freeze"
+    />
+</circle>
+<g transform="translate(30 123) rotate(45 0 0)">
+    <path
+        d="M0 0L97.581 0"
+        stroke="#6CBA82"
+        stroke-width="24"
+        stroke-linecap="butt"
+        stroke-linejoin="butt"
+    >
+        <animateTransform
+            attributeName="transform"
+            type="scale"
+            calcMode="spline"
+            dur="0.3367"
+            values="0,1;1,1;1,1;1,1"
+            keyTimes="0; 0.25; 0.4; 1"
+            keySplines="0.5 0 0.5 1;
+                        0 0 0 1;
+                        0.25 0 0.5 1;"
+            fill="freeze"
+        />
+    </path>
+</g>
+<g transform="translate(99 192) rotate(-45 0 0)">
+    <path
+        d="M0 0L179.605 0"
+        stroke="#6CBA82"
+        stroke-width="24"
+        stroke-linecap="butt"
+        stroke-linejoin="butt"
+    >
+        <animateTransform
+            attributeName="transform"
+            type="scale"
+            calcMode="spline"
+            dur="0.3367"
+            values="0,0;0,1;0,1;1,1"
+            keyTimes="0; 0.25; 0.4; 1"
+            keySplines="0.5 0 0.5 1;
+                        0 0 0 1;
+                        0.25 0 0.5 1;"
+            fill="freeze"
+        />
+    </path>
+</g>
+</svg>

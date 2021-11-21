@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+from __future__ import absolute_import, print_function
 
 # Standard library imports
 import os
@@ -7,7 +7,7 @@ from fnmatch import fnmatch
 
 # Local imports
 from . import res
-from .. import api, lib, utils
+from .. import api, library
 
 # Third party imports
 from .Qt import QtCore, QtGui, QtWidgets
@@ -22,12 +22,20 @@ class WindowHeader(QtWidgets.QWidget):
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
 
         self.image = QtWidgets.QLabel()
-        self.image.setPixmap(QtGui.QPixmap(img))
-        self.label = QtWidgets.QLabel('ShadeSets')
+        self.image.setPixmap(
+            QtGui.QPixmap(
+                img
+            ).scaled(
+                QtCore.QSize(28, 28),
+                QtCore.Qt.IgnoreAspectRatio,
+                QtCore.Qt.SmoothTransformation,
+            )
+        )
+        self.label = QtWidgets.QLabel('Shadeset')
         self.label.setObjectName('h1')
 
         self.layout = QtWidgets.QHBoxLayout()
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setContentsMargins(4, 4, 4, 4)
         self.layout.addWidget(self.image)
         self.layout.addWidget(self.label)
         self.layout.setStretch(1, 1)
@@ -55,13 +63,15 @@ class ExportForm(QtWidgets.QWidget):
             'Space separated list of attribute prefixes to include in export.'
         )
         self.attr_prefixes = QtWidgets.QLineEdit()
-        self.attr_prefixes.setText(' '.join(lib.get_export_attr_prefixes()))
+        self.attr_prefixes.setText(
+            ' '.join(library.get_export_attr_prefixes())
+        )
         self.attrs_label = QtWidgets.QLabel('Attributes')
         self.attrs_label.setToolTip(
             'Space separated list of attributes to include in export.'
         )
         self.attrs = QtWidgets.QLineEdit()
-        self.attrs.setText(' '.join(lib.get_export_attrs()))
+        self.attrs.setText(' '.join(library.get_export_attrs()))
 
         options = QtWidgets.QGroupBox()
         options_layout = QtWidgets.QVBoxLayout()
@@ -114,7 +124,7 @@ class ExportForm(QtWidgets.QWidget):
 
     def update_form(self):
         self.asset.clear()
-        assets = lib.get_assets(lib.session['project'])
+        assets = library.get_assets(library.session['project'])
         for _, asset in sorted(assets.items()):
             self.add_asset(asset)
 
@@ -128,7 +138,7 @@ class ExportForm(QtWidgets.QWidget):
         if state['suffix']:
             name += '_' + state['suffix']
 
-        next_publish = lib.get_next_publish(state['asset'], name)
+        next_publish = library.get_next_publish(state['asset'], name)
         self.preview.setText(next_publish['basename'])
 
     def export(self):
@@ -138,8 +148,8 @@ class ExportForm(QtWidgets.QWidget):
 
         # Update export attribute settings
         # These are used by CustomAttributesSet
-        lib.set_export_attrs(state['attrs'])
-        lib.set_export_attr_prefixes(state['attr_prefixes'])
+        library.set_export_attrs(state['attrs'])
+        library.set_export_attr_prefixes(state['attr_prefixes'])
 
         if not state['asset']:
             self.preview.setText('Select an asset...')
@@ -157,7 +167,7 @@ class ExportForm(QtWidgets.QWidget):
         if state['suffix']:
             name += '_' + state['suffix']
 
-        next_publish = lib.get_next_publish(state['asset'], name)
+        next_publish = library.get_next_publish(state['asset'], name)
         ss.export(
             outdir=next_publish['dirname'],
             name=next_publish['basename'].rsplit('.', 1)[0],
@@ -235,12 +245,12 @@ class ImportForm(QtWidgets.QWidget):
     def update_form(self):
         self.project.blockSignals(True)
         self.project.clear()
-        for project in sorted(lib.get_projects()):
+        for project in sorted(library.get_projects()):
             self.project.addItem(project)
         self.project.blockSignals(False)
 
-        if lib.session['project']:
-            index = self.project.findText(lib.session['project'])
+        if library.session['project']:
+            index = self.project.findText(library.session['project'])
             if index:
                 self.project.setCurrentIndex(index)
 
@@ -254,12 +264,12 @@ class ImportForm(QtWidgets.QWidget):
 
     def on_project_changed(self):
         project = self.project.currentText()
-        lib.set_project(project)
+        library.set_project(project)
         self.update_asset_widget()
 
     def update_asset_widget(self):
         self.asset.clear()
-        assets = lib.get_assets(lib.session['project'])
+        assets = library.get_assets(library.session['project'])
         for _, asset in sorted(assets.items()):
             self.add_asset(asset)
 
@@ -277,7 +287,7 @@ class ImportForm(QtWidgets.QWidget):
 
         state = self.state()
         if state['asset']:
-            publishes = lib.get_publishes(state['asset'])
+            publishes = library.get_publishes(state['asset'])
             for name, versions in sorted(publishes.items()):
                 for version, publish in sorted(versions.items()):
                     self.add_shadeset(publish)
@@ -412,13 +422,13 @@ class ConfigForm(QtWidgets.QWidget):
         self.update_form()
 
     def update_form(self):
-        self.projects_root.setText(lib.get_projects_root())
-        self.asset_template.setText(lib.get_asset_template())
-        self.publish_template.setText(lib.get_publish_template())
-        self.file_template.setText(lib.get_file_template())
+        self.projects_root.setText(library.get_projects_root())
+        self.asset_template.setText(library.get_asset_template())
+        self.publish_template.setText(library.get_publish_template())
+        self.file_template.setText(library.get_file_template())
 
     def on_projects_root_changed(self):
-        lib.set_projects_root(self.projects_root.text())
+        library.set_projects_root(self.projects_root.text())
         self.config_changed.emit()
 
     def on_projects_root_button_clicked(self):
@@ -428,23 +438,23 @@ class ConfigForm(QtWidgets.QWidget):
         folder = browse.getExistingDirectory(
             self,
             'Choose Projects Root',
-            lib.get_projects_root(),
+            library.get_projects_root(),
         )
         if not folder:
             return
 
-        lib.set_projects_root(folder)
+        library.set_projects_root(folder)
         self.projects_root.setText(folder)
         self.config_changed.emit()
 
     def on_asset_template_changed(self):
-        lib.set_asset_template(self.asset_template.text())
+        library.set_asset_template(self.asset_template.text())
         self.config_changed.emit()
 
     def on_publish_template_changed(self):
-        lib.set_publish_template(self.publish_template.text())
+        library.set_publish_template(self.publish_template.text())
         self.config_changed.emit()
 
     def on_file_template_changed(self):
-        lib.set_file_template(self.file_template.text())
+        library.set_file_template(self.file_template.text())
         self.config_changed.emit()

@@ -1,0 +1,22 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path
+    d="M30 123.038L98.9756 192L226 65"
+    stroke="#6CBA82"
+    stroke-width="24"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-dasharray="500"
+>
+    <animate
+        attributeName="stroke-dashoffset"
+        dur="0.75s"
+        calcMode="spline"
+        values="500; 420; 410; 0"
+        keyTimes="0; 0.25; 0.4; 1"
+        keySplines="0.5 0 0.5 1;
+                    0 0 0 1;
+                    0.25 0 0.5 1;"
+        fill="freeze"
+    />
+</path>
+</svg>

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function
 
 # Local imports
 from . import (
     config,
-    lib,
+    library,
     models,
     ui,
     tools,

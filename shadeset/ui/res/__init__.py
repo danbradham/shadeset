@@ -1,9 +1,4 @@
-'''
-Tool icons are from the Material Design icon library.
-'''
-
 from os.path import abspath, dirname, join
-
 
 res_package = dirname(__file__)
 

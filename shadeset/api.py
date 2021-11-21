@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function
 
 # Third party imports
 from maya import cmds
-from maya.utils import executeDeferred
-
 
 # Local imports
-from . import callbacks, tools
+from . import callbacks, legacy, tools
 from .models import ShadeSet
-from .utils import selection, get_shapes_in_hierarchy
+from .contextmanagers import selection
 
 __all__ = [
     'clear_registry',
@@ -95,17 +94,16 @@ def clear_registry():
 def install():
     '''Call in userSetup.py to install callbacks and menu items.'''
 
-    print('INSTALLING SHADESET')
-    callbacks.add_mel_proc_callback(
-        'OutlinerEdMenuCommand',
-        tools.create_outliner_menu,
-    )
+    print('shadeset: Install...')
+
+    # Add outliner submenu
+    callbacks.OutlinerRMBMenu.register(tools.create_tools_outliner_menu)
+    callbacks.ModelEditorRMBMenu.register(tools.create_tools_dag_menu)
 
 
 def uninstall():
     '''Call uninstall callbacks and menu items.'''
 
-    callbacks.remove_mel_proc_callback(
-        'OutlinerEdMenuCommand',
-        tools.create_outliner_menu,
-    )
+    print('shadeset: Uninstall...')
+    callbacks.OutlinerRMBMenu.unregister(tools.create_tools_outliner_menu)
+    callbacks.ModelEditorRMBMenu.unregister(tools.create_tools_dag_menu)

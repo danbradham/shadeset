@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function
 
 # Local imports
-from .. import lib
 from . import res
 from .widgets import (
     ConfigForm,
@@ -9,9 +9,10 @@ from .widgets import (
     ImportForm,
     WindowHeader,
 )
+from .. import library
 
 # Third party imports
-from .Qt import QtWidgets
+from .Qt import QtWidgets, QtGui
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 from maya import OpenMayaUI
 
@@ -29,7 +30,7 @@ class ShadesetUI(MayaQWidgetDockableMixin, QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super(ShadesetUI, self).__init__(*args, **kwargs)
 
-        self.header = WindowHeader(img=res.get_path('shadesets.png'))
+        self.header = WindowHeader(img=res.get_path('shadeset.png'))
         self.tabs = QtWidgets.QTabWidget(self)
         self.tabs.setDocumentMode(True)
         tabs_bar = self.tabs.tabBar()
@@ -50,7 +51,8 @@ class ShadesetUI(MayaQWidgetDockableMixin, QtWidgets.QWidget):
         layout.addWidget(self.tabs)
 
         self.setLayout(layout)
-        self.setWindowTitle('Shadesets')
+        self.setWindowTitle('Shadeset')
+        self.setWindowIcon(QtGui.QIcon(res.get_path('shadeset.png')))
         self.setStyleSheet(open(res.get_path('style.css')).read())
 
     def on_tab_changed(self, index):
@@ -69,8 +71,8 @@ def restore():
     '''Called when Maya opens to restore the Shadeset UI.'''
 
     # Set initial state
-    if not lib.session['project']:
-        lib.session['project'] = lib.guess_project()
+    if not library.session['project']:
+        library.session['project'] = library.guess_project()
 
     workspace_control = OpenMayaUI.MQtUtil.getCurrentParent()
     ShadesetUI._instance = ShadesetUI()
@@ -87,8 +89,8 @@ def show(**kwargs):
     if ShadesetUI._instance is None:
 
         # Set initial state
-        if not lib.session['project']:
-            lib.session['project'] = lib.guess_project()
+        if not library.session['project']:
+            library.session['project'] = library.guess_project()
 
         ShadesetUI._instance = ShadesetUI()
 

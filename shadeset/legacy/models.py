@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function
+from __future__ import print_function
 
 # Standard library imports
 import os
@@ -10,9 +10,9 @@ from collections import defaultdict
 from maya import cmds
 
 # Local imports
-from . import library
-from .decorators import maintains_selection
-from .packages import yaml
+from .. import library
+from ..decorators import maintain_selection
+from ..packages import yaml
 
 
 class ShadeSet(dict):
@@ -185,3 +185,144 @@ class SubSet(object):
 
     def apply(self, shade_set, selection=False):
         raise NotImplementedError()
+
+
+class ShadingGroupsSet(SubSet):
+    '''Gathers and Applies shader assignments.'''
+
+    schema_version = 0
+
+    def path(self, shade_set):
+        return os.path.join(
+            shade_set.root,
+            shade_set.name + '_shadingGroups.mb'
+        )
+
+    def gather(self, selection):
+
+        data = {}
+
+        if selection:
+            transforms = cmds.ls(sl=True, long=True)
+            short_transforms = utils.shorten_names(transforms)
+        else:
+            transforms = cmds.ls(long=True, transforms=True)
+
+        shading_groups = []
+        for t in transforms:
+            sgs = utils.get_shading_groups(t)
+            if sgs:
+                shading_groups.extend(sgs)
+
+        shading_groups = set(shading_groups)
+
+        for sg in shading_groups:
+            members = utils.get_members(sg)
+            if not members:
+                continue
+
+            _id = utils.add_id(sg)
+
+            members = utils.filter_bad_face_assignments(members)
+            if selection:
+                members = [m for m in members if m in short_transforms]
+            members = utils.shorten_names(members)
+
+            data[str(sg)] = {
+                'meta_id': _id,
+                'members': members,
+            }
+
+        return {'shadingGroups': data}
+
+    def import_(self, shade_set):
+        path = self.path(shade_set)
+        utils.import_shader(path)
+
+    def reference(self, shade_set):
+        path = self.path(shade_set)
+        utils.reference_shader(path, namespace='sg')
+
+    def export(self, shade_set, outdir, name):
+        shading_groups = shade_set['shadingGroups'].keys()
+        if 'render_layers' in shade_set:
+            for render_layer, data in shade_set['render_layers'].items():
+                shading_groups.extend(data['shadingGroups'].keys())
+        shading_groups = list(set(shading_groups))
+
+        path = os.path.join(outdir, name + '_shadingGroups.mb')
+        utils.export_shader(shading_groups, path)
+
+    def apply(self, shade_set, selection=False):
+
+        for sg, sg_data in shade_set['shadingGroups'].items():
+            if sg == 'initialShadingGroup':
+                shading_group = 'initialShadingGroup'
+            else:
+                shading_group = utils.node_from_id(sg_data['meta_id'])
+
+            members = utils.find_members(sg_data['members'])
+
+            if selection:
+                nodes = cmds.ls(sl=True, long=True)
+                members = [m for m in members
+                           if utils.member_in_hierarchy(m, *nodes)]
+
+            utils.assign_shading_group(shading_group, members)
+
+
+class CustomAttributesSet(SubSet):
+    '''Gathers and Applies shape attributes by name and prefix.'''
+
+    schema_version = 0
+
+    def gather(self, selection):
+
+        data = {}
+
+        if selection:
+            shapes = [utils.get_shape(n) for n in cmds.ls(sl=True, long=True)]
+        else:
+            shapes = [
+                utils.get_shape(n)
+                for n in cmds.ls(long=True, transforms=True)
+            ]
+
+        for shape in shapes:
+            short_name = utils.shorten_name(shape)
+            shape_data = {}
+            for prefix in library.get_export_attr_prefixes():
+                attrs = utils.get_prefixed_attrs(shape, prefix)
+                for attr in attrs:
+                    shape_data[attr] = utils.get_attr_data(shape, attr)
+
+            for attr in library.get_export_attrs():
+                attr_path = shape + '.' + attr
+                if cmds.objExists(attr_path):
+                    shape_data[attr] = utils.get_attr_data(shape, attr)
+
+            data[short_name] = shape_data
+
+        return {'customAttributes': data}
+
+    def apply(self, shade_set, selection=False):
+
+        if 'customAttributes' not in shade_set:
+            return
+
+        for shape, attrs in shade_set['customAttributes'].items():
+
+            members = utils.find_shape(shape)
+
+            if selection:
+                nodes = cmds.ls(sl=True, long=True)
+                members = [m for m in members
+                           if utils.member_in_hierarchy(m, *nodes)]
+
+            for attr_name, attr_data in attrs.items():
+                for member in members:
+                    utils.set_attr_data(member, attr_data)
+
+
+ShadeSet.registry.add(ShadingGroupsSet())
+ShadeSet.registry.add(CustomAttributesSet())

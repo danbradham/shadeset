@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 
+# Standard library imports
 import os
 import uuid
 from contextlib import contextmanager
 from functools import wraps
+
+# Third party imports
 from maya import cmds
 import maya.api.OpenMaya as om
 
@@ -12,13 +16,6 @@ def get_mfn(node):
     sel = om.MSelectionList()
     sel.add(node)
     return om.MFnDependencyNode(sel.getDependNode(0))
-
-
-def get_history(nodes):
-    inputs = []
-    for node in nodes:
-        inputs.extend(cmds.listHistory(node))
-    return inputs
 
 
 @contextmanager
@@ -34,6 +31,13 @@ def no_namespaces(nodes):
     finally:
         for mfn, old_name in zip(mfns, old_names):
             mfn.setName(old_name)
+
+
+def get_history(nodes):
+    inputs = []
+    for node in nodes:
+        inputs.extend(cmds.listHistory(node))
+    return inputs
 
 
 def get_shapes_in_hierarchy(node):

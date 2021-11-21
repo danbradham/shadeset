@@ -1,0 +1,765 @@
+ObjectSets: {}
+customAttributes:
+  cam_lens_disc_lf_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  cam_lens_disc_rt_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  cam_lens_frame_lf_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  cam_lens_frame_rt_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  cam_lens_glass_lf_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  cam_lens_glass_rt_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  cam_lens_lf_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  cam_lens_rt_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  cam_lf_01_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  cam_lf_02_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  cam_ring_lf_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  cam_ring_rt_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  cam_rt_01_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  cam_rt_02_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  frame_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_parts_lf_01_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_parts_lf_02_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_parts_lf_03_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_parts_lf_04_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_parts_lf_05_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_parts_rt_01_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_parts_rt_02_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_parts_rt_03_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_parts_rt_04_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_parts_rt_05_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_screw_lf_01_gepShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_screw_lf_02_gepShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_screw_rt_01_gepShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  hinge_screw_rt_02_gepShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  led_in_lf_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  led_in_rt_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  led_out_lf_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  led_out_rt_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  lens_lf_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  lens_logo_gepShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  lens_rt_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  logo_lf_base_gepShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  logo_lf_silver_gepShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  logo_rt_base_gepShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  logo_rt_silver_gepShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  temple_lf_button_03_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  temple_lf_button_04_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  temple_lf_gepShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  temple_rt_button_01_bottom_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  temple_rt_button_01_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  temple_rt_button_02_bottom_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  temple_rt_button_03_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  temple_rt_button_04_geoShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+  temple_rt_gepShape:
+    castsShadows:
+      children: null
+      compound: false
+      keyable: false
+      name: castsShadows
+      nice: Casts Shadows
+      options: null
+      short: csh
+      type: bool
+      value: true
+shadingGroups:
+  glass_dark_SG:
+    members:
+    - lens_rt_geoShape
+    - lens_lf_geoShape
+    meta_id: 6b5840a2-9baf-11eb-b5ec-0cc47aaa6173
+  initialShadingGroup:
+    members:
+    - hinge_screw_lf_02_gepShape
+    - hinge_screw_rt_02_gepShape
+    - hinge_screw_rt_01_gepShape
+    - hinge_screw_lf_01_gepShape
+    - led_in_rt_geoShape
+    - hinge_screw_rt_01_gepShape
+    - hinge_screw_lf_01_gepShape
+    meta_id: 6b5867b0-9baf-11eb-90a5-0cc47aaa6173
+  plastic_SG:
+    members:
+    - Ribbons_5Shape
+    - Ribbons_8Shape
+    - Ribbons_1Shape
+    - Ribbons_4Shape
+    - Ribbons_13Shape
+    - Ribbons_6Shape
+    - Ribbons_14Shape
+    - Ribbons_12Shape
+    - Ribbons_0Shape
+    - Ribbons_3Shape
+    - Ribbons_32Shape
+    - Ribbons_2Shape
+    - Ribbons_7Shape
+    - Ribbons_9Shape
+    - Ribbons_10Shape
+    - Ribbons_11Shape
+    - Ribbons_23Shape
+    - Ribbons_18Shape
+    - Ribbons_27Shape
+    - Ribbons_15Shape
+    - Ribbons_17Shape
+    - Ribbons_19Shape
+    - Ribbons_20Shape
+    - Ribbons_22Shape
+    - Ribbons_24Shape
+    - Ribbons_16Shape
+    - Ribbons_21Shape
+    - Ribbons_25Shape
+    - Ribbons_26Shape
+    - Ribbons_38Shape
+    - Ribbons_33Shape
+    - Ribbons_31Shape
+    - Ribbons_43Shape
+    - Ribbons_37Shape
+    - Ribbons_36Shape
+    - Ribbons_30Shape
+    - Ribbons_28Shape
+    - Ribbons_34Shape
+    - Ribbons_39Shape
+    - Ribbons_35Shape
+    - Ribbons_29Shape
+    - Ribbons_40Shape
+    - Ribbons_41Shape
+    - Ribbons_42Shape
+    - hinge_parts_rt_05_geoShape
+    - hinge_parts_lf_04_geoShape
+    - Ribbons_44Shape
+    - Ribbons_45Shape
+    - temple_rt_button_01_bottom_geoShape
+    - temple_rt_button_02_bottom_geoShape
+    - temple_rt_button_04_geoShape
+    - temple_rt_gepShape
+    - hinge_parts_rt_04_geoShape
+    - temple_lf_button_04_geoShape
+    - temple_lf_gepShape
+    - hinge_parts_lf_05_geoShape
+    - hinge_parts_rt_03_geoShape
+    - hinge_parts_rt_02_geoShape
+    - hinge_parts_lf_03_geoShape
+    - hinge_parts_rt_01_geoShape
+    - hinge_parts_lf_01_geoShape
+    - hinge_parts_lf_02_geoShape
+    - led_in_rt_geoShape
+    - led_in_lf_geoShape
+    - frame_geoShape
+    meta_id: 6b59c741-9baf-11eb-b5c7-0cc47aaa6173
+  plastic_glossy_SG:
+    members:
+    - temple_rt_button_03_geoShape
+    - temple_rt_button_01_geoShape
+    - logo_rt_base_gepShape
+    - temple_lf_button_03_geoShape
+    - logo_lf_base_gepShape
+    meta_id: 6b5867b2-9baf-11eb-a96c-0cc47aaa6173
+  rsMaterial15SG:
+    members:
+    - cam_rt_01_geo
+    - cam_lf_01_geo
+    - cam_lf_01_geo
+    - cam_rt_01_geo
+    - cam_rt_01_geo
+    - cam_lf_01_geo
+    - cam_rt_01_geo
+    - cam_lf_01_geo
+    - cam_lf_01_geo
+    - cam_rt_01_geo
+    - cam_rt_01_geo
+    - cam_lf_01_geo
+    meta_id: 6b577d4f-9baf-11eb-9e9d-0cc47aaa6173
+  rsMaterial2SG:
+    members:
+    - cam_lens_glass_rt_geoShape
+    - cam_lens_glass_lf_geoShape
+    - cam_lens_lf_geoShape
+    - cam_lens_glass_lf_geoShape
+    - cam_lens_glass_rt_geoShape
+    - cam_lens_glass_rt_geoShape
+    - cam_lens_glass_lf_geoShape
+    - cam_lens_glass_rt_geoShape
+    - cam_lens_glass_lf_geoShape
+    - cam_lens_lf_geoShape
+    - cam_lens_glass_lf_geoShape
+    - cam_lens_glass_rt_geoShape
+    - cam_lens_rt_geoShape
+    - cam_lens_glass_lf_geoShape
+    - cam_lens_rt_geoShape
+    - cam_lens_glass_rt_geoShape
+    meta_id: 6b5867b1-9baf-11eb-a135-0cc47aaa6173
+  rsMaterial3SG:
+    members:
+    - led_out_rt_geoShape
+    - cam_lens_frame_rt_geoShape
+    - cam_rt_02_geo
+    - cam_ring_rt_geoShape
+    - cam_lens_disc_rt_geoShape
+    - led_out_lf_geoShape
+    - cam_lens_disc_lf_geoShape
+    - cam_lens_frame_lf_geoShape
+    - cam_lf_02_geo
+    - cam_ring_lf_geoShape
+    - led_out_lf_geoShape
+    - cam_lens_disc_lf_geoShape
+    - led_out_lf_geoShape
+    - cam_ring_rt_geoShape
+    - cam_lens_frame_lf_geoShape
+    - cam_lf_02_geo
+    - cam_ring_lf_geoShape
+    - cam_lens_disc_rt_geoShape
+    - cam_lens_frame_rt_geoShape
+    - led_out_rt_geoShape
+    - cam_rt_02_geo
+    - cam_lens_disc_rt_geoShape
+    - cam_ring_rt_geoShape
+    - led_out_rt_geoShape
+    - cam_lens_frame_rt_geoShape
+    - led_in_rt_geoShape
+    - led_in_lf_geoShape
+    - cam_lens_frame_lf_geoShape
+    - cam_rt_02_geo
+    - cam_lf_02_geo
+    - led_out_lf_geoShape
+    - cam_ring_lf_geoShape
+    - cam_lens_disc_lf_geoShape
+    - led_out_rt_geoShape
+    - cam_rt_02_geo
+    - cam_lens_disc_rt_geoShape
+    - cam_lens_frame_rt_geoShape
+    - cam_ring_rt_geoShape
+    - led_in_rt_geoShape
+    - led_out_lf_geoShape
+    - cam_lf_02_geo
+    - cam_lens_frame_lf_geoShape
+    - cam_lens_disc_lf_geoShape
+    - cam_ring_lf_geoShape
+    - led_in_lf_geoShape
+    - led_out_lf_geoShape
+    - cam_lf_02_geo
+    - led_out_rt_geoShape
+    - cam_rt_02_geo
+    - cam_lens_frame_rt_geoShape
+    - cam_lf_02_geo
+    - cam_ring_rt_geoShape
+    - led_out_rt_geoShape
+    - cam_rt_02_geo
+    - cam_lens_frame_lf_geoShape
+    - cam_ring_lf_geoShape
+    meta_id: 6b588ec0-9baf-11eb-aae2-0cc47aaa6173
+  rsMaterial4SG:
+    members:
+    - cam_lens_rt_geoShape
+    - cam_lens_lf_geoShape
+    - cam_lens_disc_lf_geoShape
+    - cam_lens_lf_geoShape
+    - cam_lens_rt_geoShape
+    - cam_lens_rt_geoShape
+    - cam_lens_lf_geoShape
+    - cam_lens_rt_geoShape
+    - cam_lens_lf_geoShape
+    - cam_lens_disc_lf_geoShape
+    - cam_lens_disc_rt_geoShape
+    - cam_lens_disc_rt_geoShape
+    meta_id: 6b5840a1-9baf-11eb-8221-0cc47aaa6173
+  rsMaterial5SG:
+    members:
+    - lens_logo_gepShape
+    - RB_Logo_front_geoShape
+    - lens_logo_gepShape
+    - lens_logo_gepShape
+    - RB_Logo_front_gepShape
+    - lens_logo_gepShape
+    meta_id: 6b59c740-9baf-11eb-b3e9-0cc47aaa6173
+  rsMaterial8SG:
+    members:
+    - logo_rt_silver_gepShape
+    - logo_rt_silver_gepShape
+    - logo_lf_silver_gepShape
+    - logo_lf_silver_gepShape
+    - logo_rt_silver_gepShape
+    - logo_lf_silver_gepShape
+    - logo_rt_silver_gepShape
+    - logo_lf_silver_gepShape
+    - logo_rt_silver_gepShape
+    - logo_lf_silver_gepShape
+    - logo_rt_silver_gepShape
+    - logo_lf_silver_gepShape
+    meta_id: 6b59a030-9baf-11eb-8de1-0cc47aaa6173
